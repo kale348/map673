@@ -3,7 +3,7 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>Lab 01 Template</title>
+    <title>Rented Housing in Kentucky</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     
     <!-- Add JQuery, Leaflet, and Simple Statistics JavaScript libraries -->
@@ -88,23 +88,23 @@
 
 <body>
     <header>
+        <!-- This default title will be changed dynamically using JQuery -->
         <h1>Map Title</h1>
-        <h2>Map Subtitle</h2>
     </header>
 
     <div id='map'></div>
 
     <footer>
-        <p>Map authored by YOUR NAME</p>
-        <p>Additional information about the data and map goes here.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
-        </p>
+        <p>Map authored by Lauren Winkler</p>
+        <p>This map shows the percentage of occupied housing units in Kentucky which were rented in 2010. These data were obtained through <a href="http://factfinder.census.gov/" target="_blank">American Fact Finder</a>; 2010 Census, SF1 and have been aggregated by county.</p>
+        <p>Renter-occupied housing percentages have been classified using the ckmeans statistical method. This means that counties with statistically similar rentership percentages are shown in the same color. All maps distort data in some way, but this classification method provides far less distortion than equal interval, quantile, or other manual classification methods.</p>
+        <p>This map shows that the state's urban counties (like Fayette, Hardin, and Jefferson counties) have the highest percentage of rented housing. (Note the similarities between rentership and <a href="https://commons.wikimedia.org/wiki/U.S._state_population_maps#/media/File:Kentucky_population_map.png" target="_blank">population density</a>). There are, however, a few outliers for the some of the least populated counties. Representing the data over areas of equal population, instead of counties, would eliminate this bias. Overlaying this data on a basemap showing Kentucky's cities and universities would also help support the map's story.</p>
     </footer>
 
     <script>
         
         //Select <h1> element and dynamically change its title
-        $("h1").html("Housing Ownership in Kentucky");
+        $("h1").html("Rented Housing in Kentucky");
         
         var options = {
             center: [37.8, -85.8],
@@ -118,17 +118,21 @@
         }));
         
         var dataLayer,
-            attribute = "OWNED_MORT", // owner occupied units with a mortgage or loan
-            norm = "OWNER"; // normalization variable for choropleth map: total number of owner occupied housing units
+            attribute = "RENTER", // renter occupied units
+            norm = "OCCUPIED"; // normalization variable for choropleth map: total number of occupied housing units
+            county = "NAME"; // county name
+        
+        var popup;
         
         //Use JQuery's getJSON() method to load the ky_counties_housing.json data via AJAX (asynchronously, load data after the page loads to improve performance)
         $.getJSON("ky_counties_housing.json", function(data) {
             
-            // The data loaded from the file is accessible here within this function scope!
-            //console.log(data);
+            // The data loaded from the file is accessible here within this function scope
             
             // Use Leaflet geoJson() method to add the GeoJSON data to the map and assign it to the dataLayer variable
             dataLayer = L.geoJson(data, {
+                
+                // Create an initial style for each feature
                 style: function(feature) {
                     return {
                         color: '#dddddd', // stroke color
@@ -136,20 +140,26 @@
                         fillOpacity: 1, // 100% opaque
                         fillColor: '#1f78b4'
                     };
+                },
+                
+                // Build the popup for each feature and bind the popup to the feature
+                onEachFeature: function(feature,layer) {
+                    var popup = '<b>' + layer.feature.properties[county] + ' County</b><br>' + attribute + ": " + ((layer.feature.properties[attribute]/layer.feature.properties[norm]) * 100).toLocaleString() + "%";
+                    layer.bindPopup(popup);
                 }
+                
             }).addTo(map);
             
             drawMap();
             
         })
-        // data variable is not accessible here!
               
         // Get the class breaks based on the ckmeans classification method. Loop through each county and set its color based on which cluster its value falls into
         function drawMap() {
             
             var breaks = getClassBreaks();
             
-            // dynamically change the polygon colors based on the percentage of owner occupied housing units owned with a mortgage or loan
+            // Dynamically change the polygon colors based on the normalized value
             dataLayer.eachLayer(function(layer) {                
                 layer.setStyle({
                     fillColor: getColor(layer.feature.properties[attribute]/layer.feature.properties[norm], breaks)
@@ -158,40 +168,36 @@
             
             drawLegend(breaks);
             
+            
         } // end drawMap()
         
-        // Determine the range of the percentage of mortgaged/loaded owner occupied housing units and establish classification breaks
+        // Determine the normalized values and establish classification breaks
         function getClassBreaks() {
             
             // Create an empty array to store the values
             var values = [];
             
-            // Loop through each county to get its mortgaged housing units and total owner occupied housing units
+            // Loop through each county to get its normalized attribute
             dataLayer.eachLayer(function(layer) {
-                // Calculate the normalized mortgaged housing units / total owner occupied housing units for each county
+                // Calculate the normalized value (attribute to map / normalization attribute)
                 var value = layer.feature.properties[attribute]/layer.feature.properties[norm];
                 
                 // Push each normalized value into the array
                 values.push(value);
             });
                 
-            //console.log(values);
-                
-            // determine 5 clusters of statistically similar values, sorted in ascending order
+            // Determine 5 clusters of statistically similar values, sorted in ascending order
             var clusters = ss.ckmeans(values, 5);
-            
-            //console.log(clusters);
                 
             // Create a 2-dimensional array of the break points (lowest and highest values) in each cluster. The lowest value in each cluster is cluster[0]; the highest value is cluster.pop().
             var breaks = clusters.map(function(cluster) {
                 return [cluster[0],cluster.pop()];
             });
             
-            //console.log(breaks);
-            
             // Return the array of class breaks
             return breaks;
-            } // end getClassBreaks()
+        
+        } // end getClassBreaks()       
 
         // Set the color of the features between each break point. breaks[0][1] is the upper value (index 1) of the first cluster (index 0). breaks[1][1] is the upper value (index 1) of the second cluster (index 1), and so on.
         function getColor(d, breaks) {
@@ -208,9 +214,9 @@
             }
         } // end getColor()
         
+        
         // Create the legend        
         function drawLegend(breaks) {
-            console.log(breaks);
             
             // Create a new Leaflet control object, and position it top left
             var legend = L.control({
