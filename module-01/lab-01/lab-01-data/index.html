@@ -180,7 +180,7 @@
         // Determine the normalized values and establish classification breaks
         function getClassBreaks() {
             
-            // Create an empty array to store the values
+            // Create an empty array to store the normalized values
             var values = [];
             
             // Loop through each county to get its normalized attribute
@@ -205,19 +205,30 @@
         
         } // end getClassBreaks()       
 
-        // Set the color of the features between each break point. breaks[0][1] is the upper value (index 1) of the first cluster (index 0). breaks[1][1] is the upper value (index 1) of the second cluster (index 1), and so on.
+        // Set the color of the features depending on which cluster the value falls in
         function getColor(d, breaks) {
+            
+            // If the data value <= the upper value of the first cluster
             if (d <= breaks[0][1]) {
                 return '#f1eef6';
+                
+            // If the data value <= the upper value of the second cluster    
             } else if (d <= breaks[1][1]) {
                 return '#bdc9e1';
+                
+            // If the data value <= the upper value of the third cluster   
             } else if (d <= breaks[2][1]) {
                 return '#74a9cf';
+                
+            // If the data value <= the upper value of the fourth cluster   
             } else if (d <= breaks[3][1]) {
                 return '#2b8cbe'
+                
+            // If the data value <= the upper value of the fifth cluster  
             } else if (d <= breaks[4][1]) {
                 return '#045a8d'
-            }
+                
+            }        
         } // end getColor()
         
         
