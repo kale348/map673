@@ -24,7 +24,7 @@
         }
         header {
             width: 80%;
-            margin: 10px auto 10px auto;
+            margin: 10px auto;
         }
         h1 {
             display: inline-block;
@@ -38,13 +38,13 @@
         #map {
             width: 80%;
             height: 540px;
-            margin: 10px auto 10px auto;
+            margin: 10px auto;
             background: whitesmoke;
             border: 2px solid #dddedf;
         }
         footer {
             width: 80%;
-            margin: 10px auto 10px auto;
+            margin: 10px auto;
         }
         p {
             font-size: 1em;
@@ -122,8 +122,6 @@
             norm = "OCCUPIED"; // normalization variable for choropleth map: total number of occupied housing units
             county = "NAME"; // county name
         
-        var popup;
-        
         //Use JQuery's getJSON() method to load the ky_counties_housing.json data via AJAX (asynchronously, load data after the page loads to improve performance)
         $.getJSON("ky_counties_housing.json", function(data) {
             
@@ -140,12 +138,6 @@
                         fillOpacity: 1, // 100% opaque
                         fillColor: '#1f78b4'
                     };
-                },
-                
-                // Build the popup for each feature and bind the popup to the feature
-                onEachFeature: function(feature,layer) {
-                    var popup = '<b>' + layer.feature.properties[county] + ' County</b><br>' + attribute + ": " + ((layer.feature.properties[attribute]/layer.feature.properties[norm]) * 100).toLocaleString() + "%";
-                    layer.bindPopup(popup);
                 }
                 
             }).addTo(map);
@@ -154,16 +146,30 @@
             
         })
               
-        // Get the class breaks based on the ckmeans classification method. Loop through each county and set its color based on which cluster its value falls into
+        // Get the class breaks based on the ckmeans classification method
+        // Loop through each county and:
+            // 1. Set its color based on which cluster its normalized attribute falls into
+            // 2. Build and bind its popup
+        // Draw the legend        
         function drawMap() {
             
             var breaks = getClassBreaks();
             
-            // Dynamically change the polygon colors based on the normalized value
-            dataLayer.eachLayer(function(layer) {                
+            // Loop through each county
+            dataLayer.eachLayer(function(layer) {  
+                
+                // Set its color based on the normalized attribute
                 layer.setStyle({
                     fillColor: getColor(layer.feature.properties[attribute]/layer.feature.properties[norm], breaks)
                 });
+                
+                // Build the popup for the county
+                var popup = '<b>' + layer.feature.properties[county] + ' County</b><br>' +
+                            attribute + ": " + ((layer.feature.properties[attribute]/layer.feature.properties[norm]) * 100).toLocaleString() + "%";
+                
+                // Bind the popup to the county
+                layer.bindPopup(popup);
+                
             });
             
             drawLegend(breaks);
