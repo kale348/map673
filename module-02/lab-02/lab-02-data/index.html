@@ -3,7 +3,7 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>Owned, Rented, and Vacant Housing in Kentucky</title>
+    <title>Vacant Housing in Kentucky</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
     <!-- Add JQuery, Leaflet, and Simple Statistics JavaScript libraries -->
@@ -119,16 +119,18 @@
 
 <body>
     <header>
-        <h1>Owned, Rented, and Vacant Housing in Kentucky</h1>
-        <h2>Map Subtitle</h2>
+        <h1>Vacant Housing in Kentucky</h1>
     </header>
 
     <div id='ui-controls'>
         <label>Choose a data attribute:</label>
-        <select id="occupied">
-            <option value="OWNED_MORT" selected>Owned with a mortgage</option>
-            <option value="OWNED_FREE">Owned free and clear</option>
-            <option value="RENTER">Rented</option>
+        <select id="vacant">
+            <option value="VACANT_FOR" selected>Vacant, for rent</option>
+            <option value="VACANT_FO2">Vacant, for sale</option>
+            <option value="VACANT_SEA">Vacant, used seasonally or for recreational use only</option>
+            <option value="VACANT_MIG">Vacant, used by migratory workers</option>
+            <option value="VACANT_SOL">Vacant, solely unoccupied</option>            
+            <option value="VACANT_OTH">Vacant, other</option>   
         </select>
     </div>
     <!-- end ui-controls -->
@@ -137,9 +139,11 @@
 
     <footer>
         <p>Map authored by Lauren Winkler</p>
-        <p>Additional information about the data and map goes here.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
-        </p>
+        
+        <p>This map allows you to explore various types of vacant housing units in Kentucky. These data were obtained through <a href="http://factfinder.census.gov/" target="_blank">American Fact Finder</a>; 2010 Census, SF1 and have been aggregated by county.</p>
+        
+        <p>Select an attribute from the dropdown to explore its data. Click a county to view its name and percentage of the selected vacant housing attribute, or hover over a county to view its total number of each type of vacant housing.</p>
+        
     </footer>
 
     <script>
@@ -158,16 +162,19 @@
         
         // Define variables for the mapped attribute, normalization attribute, and county name
         var dataLayer,
-            attribute = "OWNED_MORT", // assign attribute variable for choropleth map: housing units owned with a mortgage or loan
-            norm = "OCCUPIED"; // assign normalization variable for choropleth map: total number of occupied housing units
-            county = "NAME"; // county name
+            attribute = "VACANT_FOR", // assign attribute variable for choropleth map: housing units which are vacant and for rent
+            norm = "VACANT"; // assign normalization variable for choropleth map: total number of vacant housing units
+            county = "NAME"; // county name        
         
         // Create the labels object to store meaningful labels for each attribute
         var labels = {
-            "OCCUPIED": "occupied units",
-            "OWNED_MORT": "% occupied housing units owned with a mortgage",
-            "OWNED_FREE": "% occupied housing units owned free and clear",
-            "RENTER": "% occupied housing units rented"
+            "VACANT": "vacant units",
+            "VACANT_FOR": "% vacant housing units for rent",
+            "VACANT_FO2": "% vacant housing units for sale",
+            "VACANT_SEA": "% vacant housing units used seasonally or recreationally",
+            "VACANT_MIG": "% vacant housing units used for migratory workers",
+            "VACANT_SOL": "% vacant housing units, solely unoccupied",            
+            "VACANT_MIG": "% other vacant housing units",
         }
 
         //Use JQuery's getJSON() method to load the ky_counties_housing.json data via AJAX (asynchronously, load data after the page loads to improve performance)
@@ -229,10 +236,21 @@
                     labels[attribute] + ": " +
                     ((props[attribute] / props[norm]) * 100).toLocaleString() + "%");
                 
-                // When the user hovers over a county (layer), call the update info function to update the info panel with the name and housing attributes for the selected county
+                // When the user hovers over a county (layer)
                 layer.on('mouseover', function() {
+                    
+                    // Call the update info function to update the info panel with the name and housing attributes for the selected county
                     updateInfo(this); // "this" is the county (layer) being hovered over
-                })
+                    
+                    // Bring the selected county to the front of the layer order and highlight it by updating its stroke color and stroke weight.
+                    layer.bringToFront()
+                    layer.setStyle({
+                        color: 'red', // set highlight stroke color
+                        opacity: .9, // set highlight stroke opacity to 90%
+                        weight: 4 // set highlight stroke weight
+                    });
+                    
+                });
                 
             });
             
@@ -243,7 +261,13 @@
             
             // Use the JQuery hide() method to hide the info panel div when the user hovers outside of Kentucky
             dataLayer.on('mouseout', function() {
-                $(".info").hide();    
+                $(".info").hide();  
+                
+                dataLayer.setStyle({
+                    color: '#dddddd', // restore initial stroke color
+                    weight: 2 // restore initial stroke weight
+                });                
+                
             });
             
             // Call the function to update the legend based on the currently selected attribute
@@ -335,8 +359,8 @@
             // 3. Make a call again to redraw the map with the new attribute
         function buildUI() {
             
-            // Use the JQuery change() method to listen for a change in the occupied dropdown
-            $('select[id="occupied"]').change(function() {
+            // Use the JQuery change() method to listen for a change in the vacant dropdown
+            $('select[id="vacant"]').change(function() {
                
                 // Use the JQuery select $() and val() methods to determine the value of the selected dropdown option and assign it as the new mapped attribute
                 attribute = $(this).val();
@@ -407,10 +431,14 @@
             
             // Build the HTML for the info panel containing the selected county's name and housing attributes
             var html = "<h3>"+props['NAME']+" County</h3>" +
-                "total # occupied units: <b>" + props["OCCUPIED"]+"</b><br>"+
-                "# owned with mortgage or loan: <b>"+ props["OWNED_MORT"]+"</b><br>"+
-                "# owned free and clear: <b>"+ props["OWNED_FREE"]+"</b><br>"+
-                "# occupied by renters: <b>"+ props["RENTER"]+"</b>"
+                "total # vacant units: <b>" + props["VACANT"]+"</b><br>"+
+                "# vacant, for rent: <b>"+ props["VACANT_FOR"]+"</b><br>"+
+                "# vacant, for sale: <b>"+ props["VACANT_FO2"]+"</b><br>"+
+                "# vacant, used seasonally/recreationally: <b>"+ props["VACANT_SEA"]+"</b><br>"+ 
+                "# vacant, used by migratory workers: <b>"+ props["VACANT_MIG"]+"</b><br>"+ 
+                "# vacant, solely unoccupied: <b>"+ props["VACANT_SOL"]+"</b><br>"+                
+                "# vacant, other: <b>"+ props["VACANT_OTH"]+"</b>";
+            
             
             // Use the JQuery select $() and html() methods to select the info div, clear its existing contents, and fill it with the HTML data for the selected county
             $(".info").html(html);
