@@ -67,7 +67,7 @@
         
         .legend h3 {
             font-size: 1.1em;
-            font-weight: normal;
+            font-weight: bold;
             color: #001323;
             margin: 0 0 10px 0;
         }
@@ -92,6 +92,28 @@
         .leaflet-popup-content {
             max-width: 160px;
         }
+        
+        .info {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            text-align: right;
+        }
+        
+        .info h3 {
+            margin: 0;
+        }
+        
+        #ui-controls{
+            margin-left: 10%;
+        }
+        
+        #ui-controls label {
+            font-size: 1em;
+            margin-right: 5px;
+        }
     </style>
 </head>
 
@@ -102,7 +124,12 @@
     </header>
 
     <div id='ui-controls'>
-        <!-- write form element in here -->
+        <label>Choose a data attribute:</label>
+        <select id="occupied">
+            <option value="OWNED_MORT" selected>Owned with a mortgage</option>
+            <option value="OWNED_FREE">Owned free and clear</option>
+            <option value="RENTER">Rented</option>
+        </select>
     </div>
     <!-- end ui-controls -->
 
@@ -118,22 +145,30 @@
     <script>
         // Set initial options for the map
         var options = {
-            center: [37.8, -85.8],
+            center: [37.8, -85.8], // centered in Kentucky
             zoom: 7.4,
-            zoomControl: false
+            minZoom: 7.4,
+            maxZoom: 7.4,
+            dragging: false, // disable panning
+            zoomControl: false // disable zooming
         }
 
         // Create a new Leaflet map, passing map options, and assign it to the map variable
         var map = L.map('map', options);
-
-        map.addControl(L.control.zoom({
-            position: 'topright'
-        }));
-
+        
+        // Define variables for the mapped attribute, normalization attribute, and county name
         var dataLayer,
             attribute = "OWNED_MORT", // assign attribute variable for choropleth map: housing units owned with a mortgage or loan
             norm = "OCCUPIED"; // assign normalization variable for choropleth map: total number of occupied housing units
-        county = "NAME"; // county name
+            county = "NAME"; // county name
+        
+        // Create the labels object to store meaningful labels for each attribute
+        var labels = {
+            "OCCUPIED": "occupied units",
+            "OWNED_MORT": "% occupied housing units owned with a mortgage",
+            "OWNED_FREE": "% occupied housing units owned free and clear",
+            "RENTER": "% occupied housing units rented"
+        }
 
         //Use JQuery's getJSON() method to load the ky_counties_housing.json data via AJAX (asynchronously, load data after the page loads to improve performance)
         $.getJSON("ky_counties_housing.json", function (data) {
@@ -151,16 +186,27 @@
                     };
                 }
             }).addTo(map); // add the Leaflet GeoJson layer to the map
+            
+            // Call the function to draw the initial empty legend
+            drawLegend(); 
 
-            drawMap(); // call function to draw the map
+            // Call the function to draw the initial map and populate the legend
+            drawMap();
+            
+            // Call the function to draw an empty info panel
+            drawInfo();
+            
+            // Call the function to determine the selected attribute from the dropdown and redraw the map
+            buildUI(); 
 
         });
 
+        // Draw the map
         // Get the class breaks based on the ckmeans classification method
         // Loop through each county and:
-        // 1. Set its color based on which cluster its normalized attribute falls into
-        // 2. Build and bind its popup
-        // Draw the legend
+            // 1. Set its color based on which cluster its normalized attribute falls into
+            // 2. Build and bind its popup
+            // Draw the legend
         function drawMap() {
 
             // Call function to determine class breaks and assign return value to the breaks variable
@@ -179,13 +225,29 @@
                 });
 
                 // Build the popup with the county name and normalized attribute and bind it to the county
-                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
-                    attribute + ": " +
+                layer.bindPopup("<b>" + props[county] + " County</b></br>" +
+                    labels[attribute] + ": " +
                     ((props[attribute] / props[norm]) * 100).toLocaleString() + "%");
+                
+                // When the user hovers over a county (layer), call the update info function to update the info panel with the name and housing attributes for the selected county
+                layer.on('mouseover', function() {
+                    updateInfo(this); // "this" is the county (layer) being hovered over
+                })
+                
             });
-
-            // Call the function to draw the legend, sending the breaks array as argument
-            drawLegend(breaks);
+            
+            // Use the JQuery show() method to show the info panel div when the user hovers over any county in Kentucky
+            dataLayer.on('mouseover', function() {
+                $(".info").show();
+            });
+            
+            // Use the JQuery hide() method to hide the info panel div when the user hovers outside of Kentucky
+            dataLayer.on('mouseout', function() {
+                $(".info").hide();    
+            });
+            
+            // Call the function to update the legend based on the currently selected attribute
+            updateLegend(breaks);
         }
 
         // Determine the normalized values and establish classification breaks
@@ -244,8 +306,8 @@
             }
         }
 
-        // Create the legend    
-        function drawLegend(breaks) {
+        // Create the empty legend    
+        function drawLegend() {
 
             // Create a new Leaflet control object, and position it top left
             var legend = L.control({
@@ -258,23 +320,7 @@
                 // Create a new HTML <div> element and give it a class name of "legend"
                 var div = L.DomUtil.create('div', 'legend');
 
-                // First append an <h3> heading tag to the div holding the current attribute and normalized values (i.e., the mapped phenomena)
-                div.innerHTML = "<h3>" + attribute + " per " + norm + "</h3>";
-
-                // For each of our breaks
-                for (var i = 0; i < breaks.length; i++) {
-
-                    // Determine the color associated with each break value, including the lower range value
-                    var color = getColor(breaks[i][0], breaks);
-
-                    // Concatenate a <span> tag styled with the color and a label with the low and high range values of that particular class
-                    div.innerHTML +=
-                        '<span style="background:' + color + '"></span> ' +
-                        '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
-                        (breaks[i][1] * 100).toLocaleString() + '% </label>';
-                }
-
-                // Return the populated legend div to be added to the map   
+                // Return the legend div element to be added to the map   
                 return div;
 
             };
@@ -282,6 +328,94 @@
             // Add the legend to the map
             legend.addTo(map);
         }
+        
+        // Build the user interface to:
+            // 1. Select the #ui-controls div
+            // 2. Add an event listener for when the user changes the attribute dropdown selection
+            // 3. Make a call again to redraw the map with the new attribute
+        function buildUI() {
+            
+            // Use the JQuery change() method to listen for a change in the occupied dropdown
+            $('select[id="occupied"]').change(function() {
+               
+                // Use the JQuery select $() and val() methods to determine the value of the selected dropdown option and assign it as the new mapped attribute
+                attribute = $(this).val();
+                
+                // Redraw the map with the newly selected attribute
+                drawMap();
+                
+            });
+            
+        }
+        
+        // Update the legend. Select the legend and populate it with the legend for the currently selected attribute
+        function updateLegend(breaks) {
+            
+                // Use the JQuery select $() method to select the legend div and assign it to the new legend variable
+                var legend = $('.legend');
+            
+                // Use the JQuery html() method to clear the existing contents in the legend div and add an <h3> heading tag to the legend div that displays the currently selected attribute and the normalization attribute (i.e., the mapped phenomena)
+                legend.html("<h3>" + labels[attribute] + "</h3>");
+
+                // For each of the class breaks
+                for (var i = 0; i < breaks.length; i++) {
+
+                    // Determine the color associated with each break value, using the lower range value
+                    var color = getColor(breaks[i][0], breaks);
+
+                    // Use the JQuery append() method to add a <span> tag to the legend div styled with the color and a label with the low and high range values of that particular class
+                    legend.append(
+                        '<span style="background:' + color + '"></span> ' +
+                        '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
+                        (breaks[i][1] * 100).toLocaleString() + '% </label>');
+                }
+            
+        }
+        
+        // Draw an empty info panel
+        function drawInfo() {
+            
+            // Create a new Leaflet control object, and position it top right
+            var info = L.control({
+                position: 'topright'
+            });
+            
+            // When the info panel is added to the map
+            info.onAdd = function(map) {
+                
+                // Create a new HTML <div> element and give it a class name of "info"
+                var div = L.DomUtil.create('div', 'info');
+                
+                // Return the info div element to be added to the map
+                return div;
+                
+            }
+            
+            // Add the empty info panel to the map
+            info.addTo(map);
+            
+            // Use the JQuery hide() method to hide the empty info panel so it won't appear until the user hovers over a county
+            $(".info").hide();
+            
+        }
+        
+        // Update the info panel based on the selected county (layer)
+        function updateInfo(layer) {
+            
+            // Create shorthand variable to access layer properties
+            var props = layer.feature.properties;
+            
+            // Build the HTML for the info panel containing the selected county's name and housing attributes
+            var html = "<h3>"+props['NAME']+" County</h3>" +
+                "total # occupied units: <b>" + props["OCCUPIED"]+"</b><br>"+
+                "# owned with mortgage or loan: <b>"+ props["OWNED_MORT"]+"</b><br>"+
+                "# owned free and clear: <b>"+ props["OWNED_FREE"]+"</b><br>"+
+                "# occupied by renters: <b>"+ props["RENTER"]+"</b>"
+            
+            // Use the JQuery select $() and html() methods to select the info div, clear its existing contents, and fill it with the HTML data for the selected county
+            $(".info").html(html);
+        }
+        
     </script>
 
 </body>
