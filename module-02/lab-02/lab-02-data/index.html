@@ -3,11 +3,12 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>Lab 02 Starter</title>
+    <title>Owned, Rented, and Vacant Housing in Kentucky</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
+    <!-- Add JQuery, Leaflet, and Simple Statistics JavaScript libraries -->
     <script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
-<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.js"></script>
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
@@ -21,19 +22,23 @@
             font-family: Lato, sans-serif;
             color: #0D0000;
         }
+        
         header {
             width: 80%;
             margin: 10px auto 10px auto;
         }
+        
         h1 {
             display: inline-block;
             margin-right: 20px;
             color: #001323;
         }
+        
         h2 {
             display: inline-block;
             color: #001323;
         }
+        
         #map {
             width: 80%;
             height: 540px;
@@ -41,179 +46,244 @@
             background: whitesmoke;
             border: 2px solid #dddedf;
         }
+        
         footer {
             padding: 6px 10%;
             width: 80%;
         }
+        
         p {
             font-size: 1em;
             color: #001323;
         }
+        
         .legend {
             padding: 6px 8px;
             font-size: 1em;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
         }
+        
         .legend h3 {
             font-size: 1.1em;
             font-weight: normal;
             color: #001323;
             margin: 0 0 10px 0;
         }
+        
         .legend span {
             width: 20px;
             height: 20px;
             float: left;
             margin: 0 10px 4px 0;
         }
+        
         .legend label {
             font-size: 1.1em;
         }
+        
         .legend label:after {
             content: '';
             display: block;
             clear: both;
         }
-        .leaflet-popup-content {
-            max-width: 160px;   
-        }
         
+        .leaflet-popup-content {
+            max-width: 160px;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Map Title</h1>
+        <h1>Owned, Rented, and Vacant Housing in Kentucky</h1>
         <h2>Map Subtitle</h2>
     </header>
+
+    <div id='ui-controls'>
+        <!-- write form element in here -->
+    </div>
+    <!-- end ui-controls -->
 
     <div id='map'></div>
 
     <footer>
-        <p>Map authored by YOUR NAME</p>
+        <p>Map authored by Lauren Winkler</p>
         <p>Additional information about the data and map goes here.</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
         </p>
     </footer>
 
     <script>
-        
+        // Set initial options for the map
         var options = {
             center: [37.8, -85.8],
             zoom: 7.4,
             zoomControl: false
         }
+
+        // Create a new Leaflet map, passing map options, and assign it to the map variable
         var map = L.map('map', options);
-        
-        map.addControl( L.control.zoom({ position: 'topright' }));
-        
+
+        map.addControl(L.control.zoom({
+            position: 'topright'
+        }));
+
         var dataLayer,
-            attribute = "OWNED_MORT",
-            norm = "OCCUPIED";
-        
-        $.getJSON("ky_counties_housing.json", function(data) {
-            
+            attribute = "OWNED_MORT", // assign attribute variable for choropleth map: housing units owned with a mortgage or loan
+            norm = "OCCUPIED"; // assign normalization variable for choropleth map: total number of occupied housing units
+        county = "NAME"; // county name
+
+        //Use JQuery's getJSON() method to load the ky_counties_housing.json data via AJAX (asynchronously, load data after the page loads to improve performance)
+        $.getJSON("ky_counties_housing.json", function (data) {
+
+            // Use Leaflet geoJson() method to add the GeoJSON data to the map and assign it to the dataLayer global variable
             dataLayer = L.geoJson(data, {
-                 style: function(feature) {
+
+                // Create an initial style for each feature
+                style: function (feature) {
                     return {
-                            color: '#dddddd',
-                            weight: 2,
-                            fillOpacity: 1,
-                            fillColor: '#1f78b4'
-                        };
-                }          
-            }).addTo(map);
-            
-            drawMap();
-              
+                        color: '#dddddd', // set stroke color
+                        weight: 2, // set stroke weight
+                        fillOpacity: 1, // override default fill opacity
+                        fillColor: '#1f78b4' // set fill color
+                    };
+                }
+            }).addTo(map); // add the Leaflet GeoJson layer to the map
+
+            drawMap(); // call function to draw the map
+
         });
-        
+
+        // Get the class breaks based on the ckmeans classification method
+        // Loop through each county and:
+        // 1. Set its color based on which cluster its normalized attribute falls into
+        // 2. Build and bind its popup
+        // Draw the legend
         function drawMap() {
-            
+
+            // Call function to determine class breaks and assign return value to the breaks variable
             var breaks = getClassBreaks();
 
-            dataLayer.eachLayer(function(layer) {
-                
+            // Loop through each county in the GeoJson layer
+            dataLayer.eachLayer(function (layer) {
+
+                // Create shorthand variable to access layer properties
                 var props = layer.feature.properties;
-                
+
+                // Set its fill color based on the normalized attribute
                 layer.setStyle({
-                    fillColor: getColor(props[attribute]/
-                                        props[norm], breaks)
+                    fillColor: getColor(props[attribute] /
+                        props[norm], breaks)
                 });
-                layer.bindPopup("<b>"+props["NAME"]+" County</b></br>" +
-                                attribute + ": " +
-                                ((props[attribute]/props[norm])*100).toLocaleString()+"%");  
+
+                // Build the popup with the county name and normalized attribute and bind it to the county
+                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
+                    attribute + ": " +
+                    ((props[attribute] / props[norm]) * 100).toLocaleString() + "%");
             });
-            
+
+            // Call the function to draw the legend, sending the breaks array as argument
             drawLegend(breaks);
         }
-        
-        function getClassBreaks() {
-            
-            var values = [];
-            
-            dataLayer.eachLayer(function(layer) {
-                var value = layer.feature.properties[attribute]/layer.feature.properties[norm];
-                values.push(value);   
-            }); 
-           
-            var clusters = ss.ckmeans(values, 5);
 
-            var breaks = clusters.map(function(cluster){
-                return [cluster[0],cluster.pop()];   
+        // Determine the normalized values and establish classification breaks
+        function getClassBreaks() {
+
+            // Create an empty array to store the normalized values
+            var values = [];
+
+            // Loop through each county to get its normalized attribute
+            dataLayer.eachLayer(function (layer) {
+
+                // Calculate the normalized value (attribute to map / normalization attribute)
+                var value = layer.feature.properties[attribute] / layer.feature.properties[norm];
+
+                // Push each normalized value into the array
+                values.push(value);
             });
 
+            // Use Simple Statistics to determine 5 class ranges of statistically similar values, sorted in ascending order (5 arrays of values)
+            var clusters = ss.ckmeans(values, 5);
+
+            // Use the JavaScript map() method to create a 2-dimensional array of the break points (lowest and highest values) in each cluster.
+            // The lowest value in each cluster is cluster[0]; the highest value is cluster.pop().
+            var breaks = clusters.map(function (cluster) {
+                return [cluster[0], cluster.pop()];
+            });
+
+            // Return the array of class break arrays, e.g. [[0.24,0.25], [0.26, 0.37], etc]
             return breaks;
-            
-        }   
-        
+
+        }
+
+        // Set the color of the features depending on which cluster the value falls in. The function accepts a single normalized data attribute and the class breaks 2-dimensional array and uses a series of conditional statements to determine which color value to return to the function caller.
         function getColor(d, breaks) {
-            
-            if(d <= breaks[0][1]) {
+
+            // If the data value <= the upper value of the first cluster
+            if (d <= breaks[0][1]) {
                 return '#f1eef6';
-            } else if(d <= breaks[1][1]) {
+
+                // If the data value <= the upper value of the second cluster    
+            } else if (d <= breaks[1][1]) {
                 return '#bdc9e1';
-            } else if(d <= breaks[2][1]) {
+
+                // If the data value <= the upper value of the third cluster   
+            } else if (d <= breaks[2][1]) {
                 return '#74a9cf';
-            } else if(d <= breaks[3][1]) {
+
+                // If the data value <= the upper value of the fourth cluster   
+            } else if (d <= breaks[3][1]) {
                 return '#2b8cbe'
-            } else if(d <= breaks[4][1]) {
+
+                // If the data value <= the upper value of the fifth cluster  
+            } else if (d <= breaks[4][1]) {
                 return '#045a8d'
+
             }
         }
-        
+
+        // Create the legend    
         function drawLegend(breaks) {
-            
-            var legend = L.control({position: 'topleft'});
 
+            // Create a new Leaflet control object, and position it top left
+            var legend = L.control({
+                position: 'topleft'
+            });
+
+            // When the legend is added to the map
             legend.onAdd = function () {
-                
-                var div = L.DomUtil.create('div', 'legend');
-                
-                div.innerHTML = "<h3>" + attribute + " per " + norm + "</h3>"; 
 
+                // Create a new HTML <div> element and give it a class name of "legend"
+                var div = L.DomUtil.create('div', 'legend');
+
+                // First append an <h3> heading tag to the div holding the current attribute and normalized values (i.e., the mapped phenomena)
+                div.innerHTML = "<h3>" + attribute + " per " + norm + "</h3>";
+
+                // For each of our breaks
                 for (var i = 0; i < breaks.length; i++) {
-            
+
+                    // Determine the color associated with each break value, including the lower range value
                     var color = getColor(breaks[i][0], breaks);
-                    
+
+                    // Concatenate a <span> tag styled with the color and a label with the low and high range values of that particular class
                     div.innerHTML +=
                         '<span style="background:' + color + '"></span> ' +
-                        '<label>'+(breaks[i][0]*100).toLocaleString() + ' &mdash; ' + 
-                        (breaks[i][1]*100).toLocaleString() + '</label>';
+                        '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
+                        (breaks[i][1] * 100).toLocaleString() + '% </label>';
                 }
-               
+
+                // Return the populated legend div to be added to the map   
                 return div;
-                
-                    
+
             };
 
+            // Add the legend to the map
             legend.addTo(map);
         }
-
     </script>
-    
+
 </body>
 
 </html>
