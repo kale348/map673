@@ -440,7 +440,7 @@
             // Create a shorthand variable to access layer properties
             var props = layer.feature.properties;
 
-            // Build the HTML for the info panel containing the selected county's name and its housing attributes
+            // Build the HTML for the info panel containing the selected county's name and its raw (non-normalized) housing attributes
             var html = "<h3>" + props.NAME + " County</h3>" +
                 "total # vacant units: <b>" + props.VACANT + "</b><br>" +
                 "# vacant, for rent: <b>" + props.VACANT_FOR + "</b><br>" +
