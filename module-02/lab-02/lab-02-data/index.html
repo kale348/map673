@@ -165,7 +165,7 @@
         var map = L.map('map', options);        
 
         // Define global variables for the Leaflet geoJson data layer, the mapped attribute, the normalization attribute, and the county name
-        var dataLayer,
+        var dataLayer, // Leaflet GeoJson layer
             attribute = "VACANT_FOR", // assign attribute variable for choropleth map: housing units which are vacant and for rent
             norm = "VACANT"; // assign normalization variable for choropleth map: total number of vacant housing units
             county = "NAME"; // county name        

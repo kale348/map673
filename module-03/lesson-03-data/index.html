@@ -3,12 +3,16 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>Lab 03 Starter file</title>
+    <title>US Unemployment Rates: 2001-2013</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
+    <!-- Load JQuery, Leaflet, and Simple Statistics libraries -->
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.0/simple_statistics.min.js"></script>
+
+    <!-- Load Papa Parse library to parse a CSV file and convert it to a series of JSON objects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
@@ -21,37 +25,87 @@
             font-family: Lato, sans-serif;
             color: #0D0000;
         }
+        
         header {
             padding: 6px 10%;
         }
+        
         h1 {
+            position: absolute;
+            z-index: 100;
+            top: 10px;
+            left: 60px;
             padding: 8px 15px;
-            margin: 0; 
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.5em;
+            background: rgba(25, 25, 25, 0.8);
+            border-radius: 5px;
         }
+        
         #map {
             position: absolute;
             width: 100%;
             top: 0;
             bottom: 0;
         }
+        
         footer {
             padding: 6px 10%;
             width: 80%;
         }
+        
         p {
             font-size: 1em;
             color: #001323;
-        }   
+        }
+        
+        .legend {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(75, 75, 75, 0.8);
+            color: whitesmoke;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: 180px;
+        }
+        
+        .legend h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: whitesmoke;
+            margin: 0 0 10px 0;
+            font-family: Lato, sans-serif;
+        }
+        
+        .legend span {
+            width: 32px;
+            height: 20px;
+            float: left;
+            margin: 0 10px 4px 0;
+        }
+        
+        .legend label {
+            font-size: 1.1em;
+            color: whitesmoke;
+            font-family: Lato, sans-serif;
+        }
+        
+        .legend label:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
     </style>
 </head>
 
 <body>
-    <h1>Map Title Goes Here</h1>
+    <h1>US Unemployment Rates: 2001-2013</h1>
     <div id='map'></div>
-    
+
     <script>
-        
-         // instantiate the Leaflet map
+        // Instantiate the Leaflet map
         var options = {
             center: [38.2, -94],
             zoom: 4,
@@ -61,31 +115,240 @@
             zoomControl: true
         }
         var map = L.map('map', options);
-        
-        // load map tiles and add to map
-                
-        // declare global variables
 
-        // AJAX requests to load data files
- 
-        // function to process/bind data
+        // Load map tiles and add to map
+        var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
 
-        // function to draw the map
-        
-        // function to update the map
-        
-        // function get the class breaks   
-        
-        // function to get the color value
+        // Declare global variables for the Leaflet geoJson data layer and the mapped attribute
+        var dataLayer, // Leaflet geoJson layer
+            attribute = "2001"; // attribute being mapped (the selected year)
+
+        // Use JQuery's getJSON() method to load the us-states.json data via AJAX (asynchronously, load data after the page loads to improve performance)
+        $.getJSON("us-states.json", function (states) {
+
+            // Use Papa parse to create a JSON object named "data" from the states-unemployment.csv file
+            // Numeric values in the csv file will be encoded as string values in the JSON object
+            Papa.parse('states-unemployment.csv', {
+
+                download: true,
+                header: true,
+                complete: function (data) {
+
+                    // Call the processData() function to join the CSV data in the "data" object to the state geometries in the "states" object
+                    processData(states, data);
+                    
+                    // Call the drawMap() function to draw the initial map and legend, symbolized by the initial attribtue
+                    drawMap(states);
+
+                }
+
+            }); // end of Papa.parse()
+
+            // Catch the data loading error and display an error message if the GeoJSON data cannot be parsed and loaded
+        }).fail(function () {
+
+            // The data file failed to load
+            console.log("Ruh roh! An error has occurred.");
+
+        }); // end of getJSON
+
+        // Join the CSV data to the state geometries
+        // 1. Loop through the GeoJSON data's features (states)
+        // 2. For each state, loop through the CSV data
+        // 3. If the FIPS code for the CSV data matches the FIPS codes for the state, add that CSV data as properties of that state object
+        function processData(states, data) {
+
+            // For each state
+            for (var state in states.features) {
+
+                // Create a variable to store the properties for the current state object
+                var props = states.features[state].properties;
+
+                // Loop through the CSV data
+                for (var d in data.data) {
+
+                    // If the FIPS code for the CSV data matches the FIPS code for the state
+                    if (props.STATEFP == data.data[d].STATE_FIP) {
+
+                        // Add the CSV data as additional properties of the current state
+                        states.features[state].properties = data.data[d];
+
+                        // Break out of the inner for loop. Since there will only be one match, once it's found, move onto the next state.
+                        break;
+                    }
+
+                } // End of loop through CSV data for the current state
+
+            } // End of loop through the states
+            
+        }
+
+        // Draw the initial map with an initial style and call the functions to draw the initial legend and update the map and legend with the current attribute
+        function drawMap(states) {
+            
+            // Use Leaflet geoJson() method to add the states GeoJSON data to the map and assign it to the dataLayer global variable
+            dataLayer = L.geoJson(states, {
+
+                // Create an initial style for each feature
+                style: function (feature) {
+                    return {
+                        color: '#0e0e0e', // set stroke color
+                        weight: 1.5, // set stroke weight
+                        fillOpacity: 1, // override default fill opacity
+                        fillColor: '#fef0d9' // set fill color
+                    };
+                }
+
+            }).addTo(map); // add the Leaflet GeoJson layer to the map
+
+            // Call the function to draw the initial empty legend
+            drawLegend();
+
+            // Call the function to draw map and populate the legend for the current attribute
+            updateMap();
+        }
+
+        // Update the map
+        // Get the class breaks based on the quantile classification method
+        // Loop through each state and set its color based on which cluster its attribute falls into
+        // Update the legend based on the break points for the currently selected attribute
+        function updateMap() {
+
+            // Call the getClassBreaks() function to determine class breaks and assign return them to the breaks variable
+            var breaks = getClassBreaks();
+
+            // Loop through each state (layer) in the GeoJson layer
+            dataLayer.eachLayer(function (layer) {
+
+                // Create a shorthand variable to access layer properties
+                var props = layer.feature.properties;
+
+                // Set the state's fill color, calling the getColor() method to determine the appropriate color based on the attribute
+                layer.setStyle({
+                    fillColor: getColor(props[attribute], breaks)
+                });
+
+            });
+
+            // Call the function to update the legend based on the break points for the currently selected attribute
+            updateLegend(breaks);
+
+        }        
+
+        // Establish classification breaks
+        function getClassBreaks() {
+
+            // Create an empty array to store the attribute values
+            var values = [];
+
+            // Loop through each state to get its mapped attribute
+            dataLayer.eachLayer(function (layer) {
+
+                // Create a shorthand variable to store the attribute (since the data is in percentages, no normalization is necessary)
+                var value = layer.feature.properties[attribute];
+
+                // Push each attribute into the array
+                values.push(value);
+            });
+
+            // Use Simple Statistics to determine 5 categories of values that fall within the designated intervals, sorted in ascending order (5 arrays of values)
+            //var clusters = ss.ckmeans(values, 5);
+            var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
+            
+            // Create an empty array to store the 2-dimensional array of the high and low values for each cluster
+            var breaks = [];
+            
+            // Loop through the values in the cluster (until the next to last one), and create a 2-dimensional array with the current value and the next value
+            for (i = 0; i < clusters.length-1; i++) {
                 
-        // function to draw the legend
-        
-        // function to update the legend
+                breaks[i] = [clusters[i], clusters[i+1]];
+            }
+
+            // Return the array of class break arrays, e.g. [[2.8, 3.7], [3.7, 4.3], etc]
+            return breaks;
+
+        }
+
+        // Set the color of the features depending on which cluster the value falls into. The function accepts a single data attribute and the class breaks 2-dimensional array and uses a series of conditional statements to determine which color value to return to the function caller. Since the data values were created as strings by Papa Parse, use the Number() function to convert the strings to numbers.
+        function getColor(d, breaks) {
+
+            // If the data value <= the upper value of the first cluster
+            if (Number(d) <= breaks[0][1]) {
+                return '#fef0d9';
+
+            // Otherwise, if the data value <= the upper value of the second cluster    
+            } else if (Number(d) <= breaks[1][1]) {
+                return '#fdcc8a';
+
+            // Otherwise, if the data value <= the upper value of the third cluster   
+            } else if (Number(d) <= breaks[2][1]) {
+                return '#fc8d59';
+
+            // Otherwise, if the data value <= the upper value of the fourth cluster   
+            } else if (Number(d) <= breaks[3][1]) {
+                return '#e34a33';
+
+            // Otherwise, if the data value <= the upper value of the fifth cluster  
+            } else if (Number(d) <= breaks[4][1]) {
+                return '#b30000';
+            }
+        }
+
+        // Create the empty legend    
+        function drawLegend() {
+
+            // Create a new Leaflet control object, and position it top left
+            var legend = L.control({
+                position: 'topright'
+            });
+
+            // When the empty legend control is added to the map
+            legend.onAdd = function () {
+
+                // Create a new HTML <div> element and give it a class name of "legend"
+                var div = L.DomUtil.create('div', 'legend');
+
+                // Return the legend <div> element to be added to the map   
+                return div;
+
+            };
+
+            // Add the legend to the map
+            legend.addTo(map);
+        }
+
+        // Update the legend. Select the legend <div> and repopulate it with the legend for the currently selected attribute.
+        function updateLegend(breaks) {
+
+            // Use the JQuery select $() method to select the legend <div> and assign it to the new legend variable
+            var legend = $('.legend');
+
+            // Use the JQuery html() method to clear the existing contents in the legend <div> and add an <h3> heading tag to the legend <div> that displays the readable value from the labels object for the currently selected attribute (i.e., the mapped phenomena)
+            legend.html("<h3>" + "% Unemployment in " + attribute + "</h3>");
+
+            // For each of the class breaks
+            for (var i = 0; i < breaks.length; i++) {
+
+                // Determine the color associated with each break value, using the upper range value
+                var color = getColor(breaks[i][1], breaks);
+
+                // Use the JQuery append() method to add a <span> tag to the legend <div> that is styled with the color for that particular class and a <label> with the low and high range values of that particular class
+                legend.append(
+                    '<span style="background:' + color + '"></span> ' +
+                    '<label>' + (breaks[i][0]).toLocaleString() + ' &mdash; ' +
+                    (breaks[i][1]).toLocaleString() + '% </label>');
+            }
+
+        }
 
         // function to create the range slider
-
+        
     </script>
-    
+
 </body>
 
 </html>
