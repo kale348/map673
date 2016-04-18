@@ -227,7 +227,7 @@
 
                 // Loop through the CSV data
                 for (var d in data.data) {
-                    
+
                     // Create a variable to store the properties for the current record from the CSV file
                     var csvProps = data.data[d];
 
@@ -236,7 +236,7 @@
 
                         // Method 1: Replace the current county properties with the properties of the CSV data
                         //counties.features[county].properties = data.data[d];
-                        
+
                         // Method 2: Loop through each field in the CSV file. Add the field as a new property in the counties object with the value from the CSV file.
                         for (var field in csvProps) {
                             props[field] = csvProps[field];
@@ -249,7 +249,7 @@
                 } // End of loop through CSV data for the current county
 
             } // End of loop through the counties
-            
+
             // Call the drawMap() function to draw the initial map and legend, symbolized by the initial year
             drawMap(counties);
 
@@ -280,15 +280,16 @@
 
             // Call the function to draw the initial empty legend
             drawLegend();
-
-            // Call the function to redraw the map symbolized by the selected year and populate the legend for the current year
-            updateMap();
-
+    
             // Call the function to draw the empty info panel and hide it until the user mouses over a county
             drawInfo();
 
             // Call the function to create the year slider UI
-            createSliderUI();
+            createSliderUI();            
+
+            // Call the function to redraw the map symbolized by the selected year and populate the legend for the current year
+            updateMap();
+
         }
 
         // Update the map
@@ -496,7 +497,7 @@
             sliderControl.addTo(map);
         }
 
-        // Select the slider form element. Leave off the ; to be able to chain the JQuery on() method for the event listener
+        // Select the slider form element. Leave off the ; to be able to chain the JQuery on() method for the event listener.
         $(".year-slider")
 
         // When the user changes the slider bar value

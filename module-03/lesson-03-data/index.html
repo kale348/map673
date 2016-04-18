@@ -121,7 +121,7 @@
         label {
             font-size: 1.1em;
             font-weight: bold;
-            font-family: Lato, sans-serif;            
+            font-family: Lato, sans-serif;
         }
     </style>
 </head>
@@ -202,7 +202,7 @@
 
                 // Loop through the CSV data
                 for (var d in data.data) {
-                    
+
                     // Create a variable to store the properties for the current record from the CSV file
                     var csvProps = data.data[d];
 
@@ -211,7 +211,7 @@
 
                         // Method 1: Replace the current state properties with the properties of the CSV data
                         //states.features[state].properties = data.data[d];
-                        
+
                         // Method 2: Loop through each field in the CSV file. Add the field as a new property in the states object with the value from the CSV file.
                         for (var field in csvProps) {
                             props[field] = csvProps[field];
@@ -227,7 +227,7 @@
 
             // Call the drawMap() function to draw the initial map and legend, symbolized by the initial attribute
             drawMap(states);
-            
+
         }
 
         // Draw the initial map with an initial style and call the functions to:
@@ -253,12 +253,13 @@
 
             // Call the function to draw the initial empty legend
             drawLegend();
+            
+            // Call the function to create the year slider UI
+            createSliderUI();            
 
             // Call the function to redraw the map symbolized by the selected year and populate the legend for the current year
             updateMap();
 
-            // Call the function to create the year slider UI
-            createSliderUI();
         }
 
         // Update the map
@@ -304,44 +305,35 @@
                 values.push(value);
             });
 
-            // Use the Simple Statistics quantile() method to determine 5 clusters of values that fall within the designated quantile intervals, sorted in ascending order (5 arrays of values)
-            var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
+            // Use the Simple Statistics quantile() method to determine 5 clusters of values that fall within the designated quantile intervals (0th percentile, 20th percentile, 40th percentile, etc.), sorted in ascending order (5 arrays of values)
+            var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
 
-            // Create an empty array to store the 2-dimensional array of the high and low values for each cluster
-            var breaks = [];
-
-            // Loop through the values in the cluster (until the next to last one), and create a 2-dimensional array with the current value and the next value
-            for (i = 0; i < clusters.length - 1; i++) {
-
-                breaks[i] = [clusters[i], clusters[i + 1]];
-            }
-
-            // Return the array of class break arrays, e.g. [[2.8, 3.7], [3.7, 4.3], etc]
+            // Return the array of class breaks
             return breaks;
 
         }
 
-        // Set the color of the states depending on which cluster its value falls into. The function accepts a single data attribute and the class breaks 2-dimensional array and uses a series of conditional statements to determine which color value to return to the function caller.
+        // Set the color of the states depending on which cluster its value falls into. The function accepts a single data attribute and the class breaks array and uses a series of conditional statements to determine which color value to return to the function caller.
         function getColor(d, breaks) {
 
             // If the data value <= the upper value of the first cluster
-            if (d <= breaks[0][1]) {
+            if (d <= breaks[1]) {
                 return '#fef0d9';
 
                 // Otherwise, if the data value <= the upper value of the second cluster    
-            } else if (d <= breaks[1][1]) {
+            } else if (d <= breaks[2]) {
                 return '#fdcc8a';
 
                 // Otherwise, if the data value <= the upper value of the third cluster   
-            } else if (d <= breaks[2][1]) {
+            } else if (d <= breaks[3]) {
                 return '#fc8d59';
 
                 // Otherwise, if the data value <= the upper value of the fourth cluster   
-            } else if (d <= breaks[3][1]) {
+            } else if (d <= breaks[4]) {
                 return '#e34a33';
 
                 // Otherwise, if the data value <= the upper value of the fifth cluster  
-            } else if (d <= breaks[4][1]) {
+            } else if (d <= breaks[5]) {
                 return '#b30000';
             }
         }
@@ -378,17 +370,17 @@
             // Use the JQuery html() method to clear the existing contents in the legend <div> and add an <h3> heading tag to the legend <div> that displays the currently selected attribute (i.e., the mapped phenomena)
             legend.html("<h3>" + "% Unemployment in " + attribute + "</h3>");
 
-            // For each of the class breaks
-            for (var i = 0; i < breaks.length; i++) {
+            // For each of the class break lower ranges
+            for (var i = 0; i < breaks.length - 1; i++) {
 
                 // Determine the color associated with each break value, using the upper range value
-                var color = getColor(breaks[i][1], breaks);
+                var color = getColor(breaks[i + 1], breaks);
 
                 // Use the JQuery append() method to add a <span> tag to the legend <div> that is styled with the color for that particular class and a <label> with the low and high range values of that particular class
                 legend.append(
                     '<span style="background:' + color + '"></span> ' +
-                    '<label>' + (breaks[i][0]).toLocaleString() + ' &mdash; ' +
-                    (breaks[i][1]).toLocaleString() + '% </label>');
+                    '<label>' + (breaks[i]).toLocaleString() + ' &mdash; ' +
+                    (breaks[i + 1]).toLocaleString() + '% </label>');
             }
 
         }
@@ -423,7 +415,7 @@
             sliderControl.addTo(map);
         }
 
-        // Select the slider form element. Leave off the ; to be able to chain the JQuery on() method for the event listener
+        // Select the slider form element. Leave off the ; to be able to chain the JQuery on() method for the event listener.
         $(".year-slider")
 
         // When the user changes the slider bar value
