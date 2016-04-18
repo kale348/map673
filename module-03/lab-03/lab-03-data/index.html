@@ -201,9 +201,6 @@
                     // Call the processData() function to join the CSV data in the "data" object to the county geometries in the "counties" object
                     processData(counties, data);
 
-                    // Call the drawMap() function to draw the initial map and legend, symbolized by the initial year
-                    drawMap(counties);
-
                 }
 
             }); // end of Papa.parse()
@@ -252,6 +249,9 @@
                 } // End of loop through CSV data for the current county
 
             } // End of loop through the counties
+            
+            // Call the drawMap() function to draw the initial map and legend, symbolized by the initial year
+            drawMap(counties);
 
         }
 
@@ -281,7 +281,7 @@
             // Call the function to draw the initial empty legend
             drawLegend();
 
-            // Call the function to draw map and populate the legend for the current attribute
+            // Call the function to redraw the map symbolized by the selected year and populate the legend for the current year
             updateMap();
 
             // Call the function to draw the empty info panel and hide it until the user mouses over a county

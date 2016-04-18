@@ -176,9 +176,6 @@
                     // Call the processData() function to join the CSV data in the "data" object to the state geometries in the "states" object
                     processData(states, data);
 
-                    // Call the drawMap() function to draw the initial map and legend, symbolized by the initial attribute
-                    drawMap(states);
-
                 }
 
             }); // end of Papa.parse()
@@ -228,6 +225,9 @@
 
             } // End of loop through the states
 
+            // Call the drawMap() function to draw the initial map and legend, symbolized by the initial attribute
+            drawMap(states);
+            
         }
 
         // Draw the initial map with an initial style and call the functions to:
@@ -254,7 +254,7 @@
             // Call the function to draw the initial empty legend
             drawLegend();
 
-            // Call the function to draw map and populate the legend for the current attribute
+            // Call the function to redraw the map symbolized by the selected year and populate the legend for the current year
             updateMap();
 
             // Call the function to create the year slider UI
