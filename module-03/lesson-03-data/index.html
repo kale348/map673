@@ -98,11 +98,11 @@
         }
         
         #ui-controls {
-            width: 176px;   
+            width: 176px;
             padding: 8px 15px 8px 15px;
-            background: rgba(75,75,75,0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 5px; 
+            background: rgba(75, 75, 75, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
             color: whitesmoke;
         }
         
@@ -111,7 +111,7 @@
         }
         
         #ui-controls .min {
-            float: left;   
+            float: left;
         }
         
         #ui-controls .max {
@@ -121,15 +121,15 @@
         label {
             font-size: 1.1em;
             font-weight: bold;
+            font-family: Lato, sans-serif;            
         }
-        
     </style>
 </head>
 
 <body>
     <h1>US Unemployment Rates: 2001-2013</h1>
     <div id="map"></div>
-    
+
     <!-- Create Range Slider Control -->
     <div id="ui-controls">
         <label>
@@ -175,7 +175,7 @@
 
                     // Call the processData() function to join the CSV data in the "data" object to the state geometries in the "states" object
                     processData(states, data);
-                    
+
                     // Call the drawMap() function to draw the initial map and legend, symbolized by the initial attribute
                     drawMap(states);
 
@@ -183,7 +183,7 @@
 
             }); // end of Papa.parse()
 
-        // Catch any data loading error and display an error message if the GeoJSON data cannot be parsed and loaded
+            // Catch any data loading error and display an error message if the GeoJSON data cannot be parsed and loaded
         }).fail(function () {
 
             // The data file failed to load
@@ -205,12 +205,20 @@
 
                 // Loop through the CSV data
                 for (var d in data.data) {
+                    
+                    // Create a variable to store the properties for the current record from the CSV file
+                    var csvProps = data.data[d];
 
                     // If the FIPS code for the CSV data matches the FIPS code for the state
                     if (props.STATEFP == data.data[d].STATE_FIP) {
 
-                        // Add the CSV data as additional properties of the current state
-                        states.features[state].properties = data.data[d];
+                        // Method 1: Replace the current state properties with the properties of the CSV data
+                        //states.features[state].properties = data.data[d];
+                        
+                        // Method 2: Loop through each field in the CSV file. Add the field as a new property in the states object with the value from the CSV file.
+                        for (var field in csvProps) {
+                            props[field] = csvProps[field];
+                        }
 
                         // Break out of the inner for loop. Since there will only be one match, once it's found, move onto the next state.
                         break;
@@ -219,7 +227,7 @@
                 } // End of loop through CSV data for the current state
 
             } // End of loop through the states
-            
+
         }
 
         // Draw the initial map with an initial style and call the functions to:
@@ -227,7 +235,7 @@
         // 2. Update the map and legend with the current attribute
         // 3. Create the year slider
         function drawMap(states) {
-            
+
             // Use Leaflet geoJson() method to add the states GeoJSON data to the map and assign it to the dataLayer global variable
             dataLayer = L.geoJson(states, {
 
@@ -248,7 +256,7 @@
 
             // Call the function to draw map and populate the legend for the current attribute
             updateMap();
-            
+
             // Call the function to create the year slider UI
             createSliderUI();
         }
@@ -278,7 +286,7 @@
             // Call the function to update the legend based on the break points for the currently selected attribute
             updateLegend(breaks);
 
-        }        
+        }
 
         // Establish classification breaks
         function getClassBreaks() {
@@ -298,14 +306,14 @@
 
             // Use the Simple Statistics quantile() method to determine 5 clusters of values that fall within the designated quantile intervals, sorted in ascending order (5 arrays of values)
             var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
-            
+
             // Create an empty array to store the 2-dimensional array of the high and low values for each cluster
             var breaks = [];
-            
+
             // Loop through the values in the cluster (until the next to last one), and create a 2-dimensional array with the current value and the next value
-            for (i = 0; i < clusters.length-1; i++) {
-                
-                breaks[i] = [clusters[i], clusters[i+1]];
+            for (i = 0; i < clusters.length - 1; i++) {
+
+                breaks[i] = [clusters[i], clusters[i + 1]];
             }
 
             // Return the array of class break arrays, e.g. [[2.8, 3.7], [3.7, 4.3], etc]
@@ -320,19 +328,19 @@
             if (d <= breaks[0][1]) {
                 return '#fef0d9';
 
-            // Otherwise, if the data value <= the upper value of the second cluster    
+                // Otherwise, if the data value <= the upper value of the second cluster    
             } else if (d <= breaks[1][1]) {
                 return '#fdcc8a';
 
-            // Otherwise, if the data value <= the upper value of the third cluster   
+                // Otherwise, if the data value <= the upper value of the third cluster   
             } else if (d <= breaks[2][1]) {
                 return '#fc8d59';
 
-            // Otherwise, if the data value <= the upper value of the fourth cluster   
+                // Otherwise, if the data value <= the upper value of the fourth cluster   
             } else if (d <= breaks[3][1]) {
                 return '#e34a33';
 
-            // Otherwise, if the data value <= the upper value of the fifth cluster  
+                // Otherwise, if the data value <= the upper value of the fifth cluster  
             } else if (d <= breaks[4][1]) {
                 return '#b30000';
             }
@@ -387,47 +395,46 @@
 
         // Create the range slider
         function createSliderUI() {
-            
+
             // Create a Leaflet control object and store a reference to it in the sliderControl variable
             var sliderControl = L.control({
                 position: 'bottomleft'
             });
-            
+
             // When we add this control object on the map
-            sliderControl.onAdd = function(map) {
-                
+            sliderControl.onAdd = function (map) {
+
                 // Select the existing DOM element with an id of "ui-controls" and assign it to the slider variable
                 var slider = L.DomUtil.get("ui-controls");
-                
+
                 // When the user clicks on the slider element
-                L.DomEvent.addListener(slider, 'mousedown', function(e) {
-                    
+                L.DomEvent.addListener(slider, 'mousedown', function (e) {
+
                     // Prevent the click event from bubbling up to the map, so that working with the slider control doesn't trigger the map panning
                     L.DomEvent.stopPropagation(e);
-                    
+
                 });
-                
+
                 // Return the slider from the onAdd method
                 return slider;
             }
-            
+
             // Add the control object containing the slider element to the map
             sliderControl.addTo(map);
         }
-        
+
         // Select the slider form element. Leave off the ; to be able to chain the JQuery on() method for the event listener
         $(".year-slider")
-        
+
         // When the user changes the slider bar value
-        .on("input change", function() {
-            
+        .on("input change", function () {
+
             // Assign the current value from the slider bar as the mapped attribute
             attribute = $(this).val();
-            
+
             // Call the function to update the map and legend
             updateMap();
         });
-        
     </script>
 
 </body>
