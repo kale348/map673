@@ -246,7 +246,7 @@ This animation shows us logging to Console `'something changed'` every time JQue
 The code within the callback function is executed every time a change occurs on that select form. Our goal here is to determine which of the options the user has selected. Notice that if we `console.log()` the mystifying word `this` within this callback, `this` refers to the "context" of the event, i.e., the select form element itself:
 
 ```javascript
-$('select[name="occupied"]').change(function() {
+$('select[id="occupied"]').change(function() {
 
     console.log(this);
 
@@ -266,7 +266,7 @@ We can `console.log()` this to verify:
 
 
 ```javascript
-$('select[name="occupied"]').change(function() {
+$('select[id="occupied"]').change(function() {
 
     console.log($(this).val());
 
@@ -281,7 +281,7 @@ Changing the form selection multiple times verifies that we're able to access th
 Great! What do we now do with this information? Recall how at the beginning of our script we declared a global variable named `attribute` and first hard coded a value of `OWNED_MORT` to it? Because this variable is global, we can now simply reassign it the value the user has selected! So:
 
 ```javascript
-$('select[name="occupied"]').change(function() {
+$('select[id="occupied"]').change(function() {
 
     attribute = $(this).val();
 
@@ -299,7 +299,7 @@ Okay, back to our mapping process. Now that we've reassigned the value of our gl
 Recall how in the callback function of our `$.getJSON()` method, we first drew our Kentucky county geometries, and then we called another function, `drawMap()` which first calculated the classification break ranges, looped through all the layers (a.k.a. counties), and assigned them a color value based upon the global variable `attribute`? Well, what happens now, once we've reassigned the value of `attribute` to a new value, if we again call that `drawMap()` function? Let's try it!
 
 ```javascript
-$('select[name="occupied"]').change(function() {
+$('select[id="occupied"]').change(function() {
 
     attribute = $(this).val();
     drawMap();
@@ -437,7 +437,7 @@ Success! We've now extended our code and refactored the legend function to allow
 
 Now lets add an info panel to the map with which we can update with additional information about each specific county. This is general summative information, and won't be updated when our user selects a different data attribute to re-color the map (which will simplify our code). Our goal is to add a new div element to the upper-right corner of the map and have this div be dynamically updated with specific content about each county as the user mouses over the counties.
 
-Our strategy therefore is to first create an empty info window and then to update it the content (a similar coded strategy as our legend). Let's first add a function call beneath our call to `drawMap();` and name it `drawInfo()`. Then, below our other function definitions, we'll declare that function. We'll use a very similar process as when we created our legend for this, taking advantage of Leaflet's *L.DomUtil* and *L.control* classes. Note that we're giving this empty div element a class of `info` within this statement: `var div = L.DomUtil.create('div', 'info');`
+Our strategy therefore is to first create an empty info window and then to update the content (a similar coded strategy as our legend). Let's first add a function call beneath our call to `drawMap();` and name it `drawInfo()`. Then, below our other function definitions, we'll declare that function. We'll use a very similar process as when we created our legend for this, taking advantage of Leaflet's *L.DomUtil* and *L.control* classes. Note that we're giving this empty div element a class of `info` within this statement: `var div = L.DomUtil.create('div', 'info');`
 
 ```javascript
 function drawInfo() {
