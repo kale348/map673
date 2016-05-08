@@ -50,7 +50,7 @@
         });
         
         // Use Leaflet geoJson() method to set an initial style for the Kenya counties
-        var countiesStyle = L.geoJson(null, {
+        var countyBoundariesStyle = L.geoJson(null, {
             style: function(feature) {
                 return {
                     color: '#0e0e0e', // set stroke color
@@ -64,13 +64,13 @@
         
         // Use the Omnivore plugin to load the counties GeoJSON data with their initial style
         // See Custom Layers in https://github.com/mapbox/leaflet-omnivore
-        var counties =  omnivore.geojson('kenya_counties.geojson', null, countiesStyle);
+        var countyBoundaries =  omnivore.geojson('kenya_counties.geojson', null, countyBoundariesStyle);
         
         // Add the styled counties layer to the map
-        counties.addTo(map);
+        countyBoundaries.addTo(map);
         
-        // Use the Omnivore plugin to load the Kenya lighting energy sources data and add them to the map
-        omnivore.csv('kenya_lighting_energy_sources_2009.csv').addTo(map);
+        // Use the Omnivore plugin to load the Kenya county centroids with lighting energy source data and add them to the map
+        var countyCentroids = omnivore.csv('kenya_lighting_energy_sources_2009.csv').addTo(map);
         
     </script>
 </body>
