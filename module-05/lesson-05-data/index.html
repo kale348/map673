@@ -33,8 +33,10 @@
 
     <script>
         
+        // Mapbox access token
         L.mapbox.accessToken = 'pk.eyJ1Ijoic2tlZXRpZG90IiwiYSI6IjJHd3UxZDgifQ.aeE1dODYNEMRwHQZT1MrLA';
 
+        // Initialize the Mapbox map, with the Mapbox Light basemap, centered in Kenya with an initial zoom level of 6, a minimum zoom of 7, a maximum zoom of 9, and panning bounds so the user doesn't pan too far away from Kenya
         var map = L.mapbox.map('map', 'mapbox.light', {
             center: [-.23, 37.8],
             zoom: 7,
@@ -42,10 +44,58 @@
             maxZoom: 9,
             maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
         });
-
-        var countyCentroids = omnivore.csv('kenya_education_2014.csv').addTo(map);
         
-        console.log(countyCentroids);
+        // Use the Omnivore plugin to load the Kenya county centroids with education data and add them to the map
+        var countyCentroids = omnivore.csv('kenya_education_2014.csv')
+            
+            // If the data has been properly loaded, convert it to a traditional GeoJSON layer and call the drawMap() function
+            .on('ready', function(e) {
+                drawMap(e.target.toGeoJSON());
+            })
+            
+            // If the data cannot be loaded or parsed, log an error message to the console
+            .on('error', function(e) {
+                console.log(e.error[0].message);
+            })
+        
+        // Draw the map with the school enrollment data
+        function drawMap(schoolData) {
+            
+            // Create a Leaflet GeoJson layer for girls enrollment in grade 1 and add it to the map
+            var girls = L.geoJson(schoolData, {
+                pointToLayer: function(feature, layer) {
+                    // Create proportional circle markers whose radii are based on the number of girls in grade 1
+                    return L.circleMarker(layer, {
+                        color: '#D96D02', // purple
+                        opacity: 1,
+                        weight: 2,
+                        fillOpacity: 0, // no fill
+                        radius: calcRadius(Number(feature.properties.G1))
+                    });
+                }
+            }).addTo(map);
+            
+            // Create a Leaflet GeoJson layer for boys enrollment in grade 1 and add it to the map
+            var boys = L.geoJson(schoolData, {
+                pointToLayer: function(feature, layer) {
+                    // Create proportional circle markers whose radii are based on the number of boys in grade 1
+                    return L.circleMarker(layer, {
+                        color: '#6E77B0', // orange
+                        opacity: 1,
+                        weight: 2,
+                        fillOpacity: 0, // no fill
+                        radius: calcRadius(Number(feature.properties.B1))
+                    });
+                }
+            }).addTo(map);
+            
+        }
+        
+        // Calculate the radius of each circle marker based on the enrollment of boys or girls in the selected grade
+        function calcRadius(val) {
+            var radius = Math.sqrt(val/Math.PI);
+            return radius * .6;
+        }
         
     </script>
 </body>
