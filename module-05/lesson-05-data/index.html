@@ -3,33 +3,222 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>A simple map</title>
+    <title>Student Attrition Rates in Kenya</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
+    <!-- Load Mapbox library -->
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    
+    <!-- Load Leaflet Omnivore plugin -->
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+    
+    <!-- Load jQuery library -->
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
-
+    
+    <!-- Load Simple Statistics library -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.min.js'></script>
+    
+    <!-- Load Mapbox CSS -->
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+    
+    <!-- Load Work Sans from Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
 
     <style>
+        
         body {
             margin: 0;
             padding: 0;
+            background: whitesmoke;
+            font-family: "Work Sans", sans-serif;
+        }
+        
+        h1 {
+            padding: 8px 25px 8px 15px;
+            color: whitesmoke;
+            margin: 0;
+            background: #1C9976;
+            font-weight: 400;
+            font-size: 1.5em;
+            text-align: right;
+        }
+        
+        h2 {
+            margin: 0;
+            padding: 8px 25px 8px 15px;
+            color: #1C9976;
+            font-weight: 500;
+            font-size: 1.2em;
+            text-align: right;
         }
         
         #map {
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 100%;
+            right: 0;
+            width: 67%;
         }
+        
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 33%;
+            background: whitesmoke;
+            border-right: 2px solid #1C9976;
+            overflow-y: scroll; /* add a scroll bar if content extends beyond the height of the page */
+        }
+        
+        #side-panel p {
+            margin: 8px 0 4px;
+            padding: 0 25px 0 15px;
+            color: #3d3d3d;
+            text-align: right;
+            font-size: 1em;
+        }
+        
+        #side-panel p:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        #side-panel img {
+            float: right;
+            margin: 0 0 15px 15px;
+        }
+        
+        #ui-slider {
+            position: absolute;
+            bottom: 20px; /* 20px from the bottom of the page */
+            left: 36%; /* 36% from the left of the page */
+            width: 200px;
+            padding: 8px 15px 4px; /* top 8px, left/right 15px, bottom 4px */
+            background: #1C9976; /* teal accent color */
+            border-radius: 3px;
+            color: whitesmoke;
+        }
+        
+        /* slider bar */
+        .slider {
+            width: 100%; /* make the slider bar 100% of the width of its div element */
+        }
+        
+        #grade {
+            position: absolute;
+            bottom: 60px;
+            left: 36%;
+            padding: 6px 15px 8px; /* top 6px, left/right 15px, bottom 8px */
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            font-size: 1em;
+        }
+        
+        /* grade level span tab */
+        #grade span {
+            font-size: 1.3em;
+            font-weight: 500;
+        }
+        
+        #legend {
+            position: absolute;
+            right: 15px;
+            bottom: 20px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            width: 160px;
+            height: 220px;
+        }
+        
+        /* legend heading */
+        #legend h3 {
+            text-align: right;
+            font-weight: 500;
+            margin: 10px 0 20px;
+        }
+        
+        #info {
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            position: absolute;
+            font-size: 1em;
+            max-width: 200px;
+            display: none; /* don't display until the user mouses over a county */
+        }
+        
+        /* paragraphs in the info window div */
+        #info p {
+            margin: 3px 0 4px;
+        }
+        
+        /* girls line of the info window */
+        .girls {
+            color: #D96D02; /* orange */
+        }
+        
+        /* boys line of the info window */
+        .boys {
+            color: #6E77B0; /* purple */
+        }
+        
+        /* last span tag of the each line of the info window (e.g. the county name and girls and boys enrollment numbers) */
+        #info span:last-child {
+            font-size: 1.3em;
+            font-weight: 500;
+        }
+        
     </style>
 </head>
 
 <body>
-
+    
     <div id='map'></div>
+    
+    <div id='side-panel'>
+    
+        <h1>Student Attrition Rates in Kenya</h1>
+        <h2>2014 Enrollment Rates for Boys and Girls</h2>
+
+        <p><img src="images/legend.png" alt="legend"></p>
+
+        <h2>About this map</h2>
+        <p>This map shows 2014 primary school enrollment for boys and girls in Kenya. Use the slider to scroll through grades 1 through 8 to compare the difference in enrollment between boys and girls and explore the enrollment attrition levels in each county.</p>
+
+        <h2>About the data</h2>
+        <p>Boys and girls enrollment rates come from the Ministry of Educations' - Basic Education Statistical Booklet captures national statistics for the Education Sector in totality (Table 33: Primary Boys Enrollment by Class and Table 34: Primary Girls Enrollment by Class). Data was acquired from the <a href="https://www.opendata.go.ke/ECD-and-Primary-EDU/National-Boys-and-Girls-Enrollments-numbers-per-Cl/wchj-qzhr" target="_blank">"National Boys and Girls Enrollments numbers per Class for Primary School Education"</a> dataset from the <a href="https://www.opendata.go.ke/en/" target="_blank">Kenya Open Data Portal</a>.</p>
+        
+    </div>
+    
+    <!-- Create the UI slider with values from grades 1-8 -->
+    <div id="ui-slider">
+        <input type="range" min="1", max="8", value="1", step="1", class="slider">
+    </div>
+    
+    <!-- Create the temporal legend, which will be placed below the UI slider to display the current grade -->
+    <div id="grade">Grade: <span>1</span></div>
+    
+    <!-- Create the div to store the legend for the proportional symbols -->
+    <div id="legend">
+        <h3>2014 enrollments per county</h3>
+        <svg class="legend" width="200" height="200"></svg>
+    </div>
+    
+    <!-- Create the info window div, which will display the county name, and the girls and boys enrollment for current grade in the selected county-->
+    <div id="info">
+        <p>County: <span></span></p>
+        <p class="girls">girls <span></span>: <span></span></p>
+        <p class="boys">boys <span></span>: <span></span></p>
+    </div>
 
     <script>
         
@@ -44,6 +233,12 @@
             maxZoom: 9,
             maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
         });
+        
+        // Define global variables for the current grade, the girls and boys enrollment layers, and the scale factor for the proportional symbols
+        var currentGrade = 1,
+            girls,
+            boys,
+            scaleFactor = .6;
         
         // Use the Omnivore plugin to load the Kenya county centroids with education data and add them to the map
         var countyCentroids = omnivore.csv('kenya_education_2014.csv')
@@ -61,41 +256,231 @@
         // Draw the map with the school enrollment data
         function drawMap(schoolData) {
             
-            // Create a Leaflet GeoJson layer for girls enrollment in grade 1 and add it to the map
-            var girls = L.geoJson(schoolData, {
-                pointToLayer: function(feature, layer) {
+            // Create a Leaflet GeoJson layer for girls enrollment and add it to the map
+            girls = L.geoJson(schoolData, {
+                pointToLayer: function(feature, latlng) {
                     // Create proportional circle markers whose radii are based on the number of girls in grade 1
-                    return L.circleMarker(layer, {
+                    return L.circleMarker(latlng, {
                         color: '#D96D02', // purple
                         opacity: 1,
                         weight: 2,
                         fillOpacity: 0, // no fill
-                        radius: calcRadius(Number(feature.properties.G1))
                     });
                 }
             }).addTo(map);
             
-            // Create a Leaflet GeoJson layer for boys enrollment in grade 1 and add it to the map
-            var boys = L.geoJson(schoolData, {
-                pointToLayer: function(feature, layer) {
+            // Create a Leaflet GeoJson layer for boys enrollment and add it to the map
+            boys = L.geoJson(schoolData, {
+                pointToLayer: function(feature, latlng) {
                     // Create proportional circle markers whose radii are based on the number of boys in grade 1
-                    return L.circleMarker(layer, {
+                    return L.circleMarker(latlng, {
                         color: '#6E77B0', // orange
                         opacity: 1,
                         weight: 2,
                         fillOpacity: 0, // no fill
-                        radius: calcRadius(Number(feature.properties.B1))
                     });
                 }
             }).addTo(map);
             
+            // Set the initial radius of the symbols based on the enrollment in the initial grade (grade 1)
+            updateSymbols();
+            
+            // When the user updates the slider, update the radii of the symbols based on the enrollment in the current grade
+            sequenceUI();
+            
+            infoWindow();
+            
         }
         
-        // Calculate the radius of each circle marker based on the enrollment of boys or girls in the selected grade
+        // Calculate the radius of each circle marker based on the enrollment of boys or girls in the current grade
         function calcRadius(val) {
             var radius = Math.sqrt(val/Math.PI);
-            return radius * .6;
+            return radius * scaleFactor;
         }
+        
+        // Set the radius of the symbols based on the enrollment in the current grade
+        function updateSymbols() {
+            
+            var radius, // variable to hold each circle's radius
+                allRadii = []; // empty array to hold all radius values
+            
+            // Loop through each feature in the girls layer
+            girls.eachLayer(function(layer) {
+                
+                // Store a reference to the radius value of the current feature
+                radius = calcRadius(Number(layer.feature.properties['G'+String(currentGrade)]));
+                
+                // Use it to set the radius of the current feature
+                layer.setRadius(radius);
+                
+                // Push the current feature's radius into the array
+                allRadii.push(radius);
+            });
+            
+            // Loop through each feature in the girls layer
+            boys.eachLayer(function(layer) {
+                
+                // Store a reference to the radius value of the current feature
+                radius = calcRadius(Number(layer.feature.properties['B'+String(currentGrade)]));
+                
+                // Use it to set the radius of the current feature
+                layer.setRadius(radius);
+                
+                // Push the current feature's radius into the array
+                allRadii.push(radius);
+                
+            });
+            
+            // Update the legend based on the max, median, and min values for the current grade
+            drawLegend(allRadii);
+            
+        }
+        
+        // When the user updates the slider, determine the current grade level, update the symbols based on the enrollment for the current grade, and update the grade label in the temporal legend
+        function sequenceUI() {
+            
+            // Select the grade level label inside the grade div element's span tag
+            var output = $('#grade span');
+            
+            // Select the slider div element
+            $('.slider')
+            
+                // When the user updates the slider
+                .on('input change', function() {
+                
+                    // Determine the current grade level
+                    currentGrade = $(this).val();
+                
+                    // Update the symbol sizes based on the enrollment for the current grade
+                    updateSymbols();
+                
+                    // Update the grade label with the current grade level
+                    output.html(currentGrade);
+                });
+          
+        }
+        
+        // Draw the legend showing three nested circles. Size the circles based on the max, median, and min radius values for the current grade. Label them based on their corresponding raw values.
+        function drawLegend(allRadii) {
+            
+            // Select the legend svg element
+            var legend = $('.legend');
+            
+            // Create an object called "circles", use Simple Statistics to calculate the max, median, and min values from the allRadii array, and store those values in the circles object
+            var circles = {
+                max: ss.max(allRadii),
+                median: ss.median(allRadii),
+                min: ss.min(allRadii)
+            }
+            
+            // Create an empty string callled "svgCircles" to store the HTML and SVG that will draw the proportional circles and their labels in the legend
+            var svgCircles = '';
+            
+            // Reverse calculate the raw value based on each radius, so the raw value can be written to the legend instead of the radius value
+            var reverseCalc = function(radius) {
+                return Math.round((Math.pow(radius/scaleFactor, 2) * Math.PI));
+            }
+            
+            // Loop through the circles object to get the radius and raw value of the max, median, and min values for the current grade
+            for (var circle in circles) {
+                
+                // Circle SVG Variables:
+                // cx = how far the element is moved right from the left edge of the div (use negative numbers to move left)
+                // cy = how far the element is moved up from the the top edge of the div (use negative numbers to move down)
+                // r = radius
+                // stroke = stroke color
+                // stroke-width = stroke width, in pixels
+                // fill = circle fill color
+                
+                // Text SVG Variables:
+                // x = how far the element is moved right from the left edge of the div (use negative numbers to move left)
+                // y = how far the element is moved up from the the top edge of the div (use negative numbers to move down)
+                // fill = text color            
+                
+                // Concatenate an SVG circle element using the current radius (max, median, or min)
+                svgCircles += '<circle cx="' + 80 + '" cy="' + (circles[circle] - 140) * -1 + '" r="' + circles[circle] + '" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
+
+                // Concatenate an SVG text element using the current raw value from the reverseCalc function (max, median, or min)
+                svgCircles += '<text x="' + 60 +'" y = "' + (circles[circle] - 120) * -1 + '" fill= "#1C9976">' + reverseCalc(circles[circle]) + '</text>';  
+            }
+            
+            // Add the svgCircles string as HTML to the legend div
+            legend.html(svgCircles);
+            
+        }
+        
+        // When the user hovers over data from one of the boys enrollment circles, display the selected county and boys and girls enrollment in the selected county for the current grade
+        function infoWindow() {
+            
+            // Select the info window div
+            var info = $('#info');
+            
+            // When the user mouses over one of the boys enrollment circles
+            boys.on('mouseover', function(e) {
+                
+                // Access the properties of the selected feature and assign it to the props variable
+                var props = e.layer.feature.properties;
+                
+                // Select and display the info window div
+                info.show();
+                
+                // Populate the county span tag with the county name for the selected feature
+                $('#info span').text(props.COUNTY);
+                
+                // Populate the first span tag in the girls row with the current grade for the selected feature
+                $(".girls span:first-child").text('(grade ' + String(currentGrade)+')');
+                
+                // Populate the first span tag in the boys row with the current grade for the selected feature
+                $(".boys span:first-child").text('(grade ' + String(currentGrade)+')');
+                
+                // Populate the last span tag in the girls row with the girls enrollment in the current grade for the selected feature
+                $(".girls span:last-child").text(props['G' + String(currentGrade)].toLocaleString());
+                
+                // Populate the last span tag in the girls row with the girls enrollment in the current grade for the selected feature
+                $(".boys span:last-child").text(props['B' + String(currentGrade)].toLocaleString());
+                
+                // Provide an affordance of giving a fill opacity of 60% to the selected circle
+                e.layer.setStyle({
+                    fillOpacity: .6
+                });
+            });
+            
+            // When the user mouses off of the boys enrollment circle
+            boys.on('mouseout', function(e) {
+                
+                // Hide the info window
+                info.hide();
+                
+                // Reset the fill opacity back to 0%
+                e.layer.setStyle({
+                    fillOpacity: 0
+                });
+            });
+            
+            // When the user moves the mouse, position the info window next to the cursor
+            $(document).mousemove(function(e) {
+                
+                // First offset the info window above and to the right of the current cursor position
+                info.css({
+                    "left": e.pageX + 6, // X coordinate of the cursor + 6px
+                    "top": e.pageY - info.height() - 15 // Y coordinate of the cursor - the height of the info window - 15px
+                });
+                
+                // If the info window crashes into the top of the page, flip it to appear below the current cursor position
+                if(info.offset().top < 4) {
+                    info.css({
+                        "top": e.pageY + 15 // Y coordinate of the  cursor + 15px
+                   });
+                }
+                
+                // If the info window crashes into the right of the page, flip it to appear to the left the current cursor position
+                if(info.offset().left + info.width() >= $(document).width() - 40) {
+                    info.css({
+                        "left": e.pageX - info.width() - 30 // X coordinate of the cursor - the width of the info window - 30px
+                    });
+                }             
+            });
+        }      
         
     </script>
 </body>
