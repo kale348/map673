@@ -185,7 +185,7 @@
         // Declare global variables for the Leaflet geoJson data layer, the mapped attribute, and the county name
         var dataLayer, // Leaflet geoJson layer
             attribute = "2001"; // attribute being mapped (the selected year)
-        county = "NAME"; // county name
+            county = "NAME"; // county name
 
         // Use JQuery's getJSON() method to load the ky-counties.json data via AJAX (asynchronously, load data after the page loads to improve performance)
         $.getJSON("ky-counties.json", function (counties) {

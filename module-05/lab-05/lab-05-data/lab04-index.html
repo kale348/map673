@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Lighting Energy Sources in Kenya</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    <!-- Load Mapbox library -->
+    <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+    
+    <!-- Load jQuery library -->
+    <script src='https://code.jquery.com/jquery-1.12.3.min.js'></script>
+    
+    <!-- Load Leaflet Omnivore plugin -->
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+    
+    <!-- Load Mapbox CSS -->
+    <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id='map'></div>
+    <script>
+        
+        // Mapbox access token
+        L.mapbox.accessToken = 'pk.eyJ1Ijoic2tlZXRpZG90IiwiYSI6IjJHd3UxZDgifQ.aeE1dODYNEMRwHQZT1MrLA';
+        
+        // Initialize the Mapbox map, with the Mapbox Light basemap, centered in Kenya with an initial zoom level of 6, a minimum zoom of 6, a maximum zoom of 9, and panning bounds so the user doesn't pan too far away from Kenya
+        var map = L.mapbox.map('map', 'mapbox.light', {
+            center: [-.23, 37.8], // centered in Kenya
+            zoom: 6, // initial zoom
+            minZoom: 6,
+            maxZoom: 9,
+            maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
+        });
+        
+        // Use Leaflet geoJson() method to set an initial style for the Kenya counties
+        var countyBoundariesStyle = L.geoJson(null, {
+            style: function(feature) {
+                return {
+                    color: '#0e0e0e', // set stroke color
+                    weight: 1.5, // set stroke weight
+                    opacity: 0.7, // set stroke opacity
+                    fillOpacity: 0.5, // override default fill opacity
+                    fillColor: '#ffffbf' // set fill color
+                }
+            }
+        });
+        
+        // Use the Omnivore plugin to load the counties GeoJSON data with their initial style
+        // See Custom Layers in https://github.com/mapbox/leaflet-omnivore
+        var countyBoundaries =  omnivore.geojson('kenya_counties.geojson', null, countyBoundariesStyle);
+        
+        // Add the styled counties layer to the map
+        countyBoundaries.addTo(map);
+        
+        // Use the Omnivore plugin to load the Kenya county centroids with lighting energy source data and add them to the map
+        var countyCentroids = omnivore.csv('kenya_lighting_energy_sources_2009.csv').addTo(map);
+        
+    </script>
+</body>
+
+</html>

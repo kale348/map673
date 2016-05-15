@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Lighting Energy Sources in Kenya</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Mapbox library -->
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+
+    <!-- Load Leaflet Omnivore plugin -->
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+
+    <!-- Load jQuery library -->
+    <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+
+    <!-- Load Simple Statistics library -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.min.js'></script>
+
+    <!-- Load Mapbox CSS -->
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+    <!-- Load Work Sans from Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: "Work Sans", sans-serif;
+            text-align: right;
+        }
+        
+        h1 {
+            padding: 8px 25px 8px 15px;
+            color: whitesmoke;
+            margin: 0;
+            background: #1C9976;
+            font-weight: 400;
+            font-size: 1.5em;
+            text-align: right;
+        }
+        
+        h2 {
+            margin: 0;
+            padding: 8px 25px 8px 15px;
+            color: #1C9976;
+            font-weight: 500;
+            font-size: 1.2em;
+            text-align: right;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 67%;
+        }
+        
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 33%;
+            background: whitesmoke;
+            border-right: 2px solid #1C9976;
+            overflow-y: scroll;
+            /* add a scroll bar if content extends beyond the height of the page */
+        }
+        
+        #side-panel p {
+            margin: 8px 0 4px;
+            padding: 0 25px 0 15px;
+            color: #3d3d3d;
+            text-align: right;
+            font-size: 1em;
+        }
+        
+        #side-panel p:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        #side-panel img {
+            float: right;
+            margin: 0 0 15px 15px;
+        }
+        
+        #legend {
+            position: absolute;
+            right: 15px;
+            bottom: 20px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            width: 160px;
+            height: 200px;
+        }
+        /* legend heading */
+        
+        #legend h3 {
+            text-align: right;
+            font-weight: 500;
+            margin: 10px 0 20px;
+        }
+        
+        #info {
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            position: absolute;
+            font-size: 1em;
+            max-width: 500px;
+            display: none;
+            /* don't display until the user mouses over a county */
+            text-align: left;
+        }
+        /* paragraphs in the info window div */
+        
+        #info p {
+            margin: 3px 0 4px;
+            text-align: left;
+        }
+        /* electric lighting line of the info window */
+        
+        .electricLighting {
+            color: #D96D02;
+            /* orange */
+        }
+        /* traditional lighting line of the info window */
+        
+        .traditionalLighting {
+            color: #6E77B0;
+            /* purple */
+        }
+        /* last span tag of the each line of the info window (e.g. the county name and electric and traditional lighting usage data) */
+        
+        #info span:first-child {
+            font-size: 1.3em;
+            font-weight: 500;
+            text-align: left;
+        }
+        
+        #detailsPanel {
+            position: absolute;
+            right: 69%;
+            top: 400px;
+            padding: 8px 15px;
+            height: 400px;
+            font-size: 0.9em;
+            display: none;
+            /* don't display until the user mouses over a county */
+        }
+        
+        #detailsPanel h2 {
+            margin: 0;
+            padding: 8px 0 0 0;
+            color: #1C9976;
+            font-weight: 500;
+            font-size: 1.2em;
+            text-align: right;
+        }
+        
+        #detailsPanel p {
+            text-align: right;
+        }
+        
+        #detailsPanel span:first-child {
+            font-weight: 500;
+            text-align: right;
+        }
+        
+
+        .choroplethLegend {         
+            position: absolute;
+            right: 15px;
+            top: 20px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            width: 200px;
+            height: 220px;
+            text-align: left;
+            font-family: "Work Sans", sans-serif;           
+        }
+        
+        .choroplethLegend h3 {
+            text-align: right;
+            font-weight: 500;
+            margin: 10px 0 10px;
+        }
+        
+        .choroplethLegend span {
+            width: 32px;
+            height: 20px;
+            float: left;
+            margin: 0 10px 4px 0;
+        }
+        
+        .choroplethLegend label:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id='map'></div>
+
+    <div id='side-panel'>
+
+        <h1>Lighting Energy Sources in Kenya</h1>
+        <h2>Electricity and Traditional Lighting Usage per County in 2009</h2>
+
+        <!--
+        <p><img src="images/legend.png" alt="legend"></p>
+        -->
+
+        <h2>About this map</h2>
+        <p>This map shows the prevalence of electric lighting and traditional lighting (pressure lamp, lantern, tin lamp, gas lamp, fuel/wood, solar, and other lighting energy sources) across Kenyan counties in 2009.</p>
+
+        <!--
+        <p>This map shows 2014 primary school enrollment for boys and girls in Kenya. Use the slider to scroll through grades 1 through 8 to compare the difference in enrollment between boys and girls and explore the enrollment attrition levels in each county.</p>
+        -->
+
+        <h2>About the data</h2>
+        <p>The number and percentage of households using electricity and traditional lighting come from the <a href="https://www.opendata.go.ke/en/" target="_blank">Kenya Open Data Portal</a>. Data was acquired from the <a href="https://www.opendata.go.ke/Distribution-and-Consumption/Main-Lighting-Energy-Sources-averaged-to-Counties-/g9hi-bs9n" target="_blank">"Main Lighting Energy Sources averaged to Counties in 2009"</a> dataset. The data present a spatial distribution of lighting energy usage across Kenya.</p>
+
+    </div>
+
+    <!-- Create the div to store the legend for the proportional symbols -->
+    <div id="legend">
+        <h3>Number of Households per County</h3>
+        <svg class="legend" width="200" height="200"></svg>
+    </div>
+
+    <!-- Create the div to store the choropleth legend for the county colors -->
+    <div id="choroplethLegend">
+        <h3>Percent of Households Using Electricity</h3>
+    </div>
+
+    <!-- Create the info window div, which will display the county name, and the percentage and number of households using electric and traditional lighting in the selected county-->
+    <div id="info">
+        <p><span></span></p>
+        <p class="electricLighting">Electric Lighting: <span></span> <span></span></p>
+        <p class="traditionalLighting">Traditional Lighting: <span></span> <span></span></p>
+    </div>
+
+    <!-- Create the details panel div, which will display the county name, and the percentage and number of households using each lighting energy source in the selected county-->
+    <div id="detailsPanel">
+        <h2><p>County</p></h2>
+        <p class="electricity">Electricity: <span></span> <span></span></p>
+        <p class="pressureLamp">Pressure Lamp: <span></span> <span></span></p>
+        <p class="lantern">Lantern: <span></span> <span></span></p>
+        <p class="tinLamp">Tin Lamp: <span></span> <span></span></p>
+        <p class="gasLamp">Gas Lamp: <span></span> <span></span></p>
+        <p class="fuelWood">Fuel/Wood: <span></span> <span></span></p>
+        <p class="solar">Solar: <span></span> <span></span></p>
+        <p class="other">Other Lighting Source: <span></span> <span></span></p>
+    </div>
+
+    <script>
+        // Mapbox access token
+        L.mapbox.accessToken = 'pk.eyJ1Ijoic2tlZXRpZG90IiwiYSI6IjJHd3UxZDgifQ.aeE1dODYNEMRwHQZT1MrLA';
+
+        // Initialize the Mapbox map, with the Mapbox Light basemap, centered in Kenya with an initial zoom level of 6, a minimum zoom of 6, a maximum zoom of 9, and panning bounds so the user doesn't pan too far away from Kenya
+        var map = L.mapbox.map('map', 'mapbox.light', {
+            center: [-.23, 37.8], // centered in Kenya
+            zoom: 6, // initial zoom
+            minZoom: 6,
+            maxZoom: 9,
+            maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
+        });
+
+        // Define global variables for the county boundaries, electric lighting, and traditional lighting layers, and the scale factor for the proportional symbols
+        var countyBoundaries,
+            countyCentroids,
+            electricLighting,
+            traditionalLighting,
+            attribute = "Pct_Electricity",
+            scaleFactor = .075;
+
+        // Use the Omnivore plugin to load the Kenya county centroids with lighting energy source data and add them to the map
+        var countyCentroids = omnivore.csv('kenya_lighting_energy_sources_2009.csv')
+
+        // If the data has been properly loaded, convert it to a traditional GeoJSON layer and call the drawCentroids() function
+        .on('ready', function (e) {
+            countyCentroids = e.target.toGeoJSON();
+            drawCentroids(countyCentroids);
+            joinAttributesToCounties();
+        })
+
+        // If the data cannot be loaded or parsed, log an error message to the console
+        .on('error', function (e) {
+            console.log(e.error[0].message);
+        })
+
+        // Join the attributes from the county centroids GeoJSON to the county boundaries GeoJSON, to be able to create the choropleth map
+        function joinAttributesToCounties() {
+
+            var countyBoundaries = omnivore.geojson('kenya_counties.geojson', null)
+
+            // If the data has been properly loaded, convert it to a traditional GeoJSON layer and call the drawCentroids() function
+            .on('ready', function (e) {
+                countyBoundaries = e.target.toGeoJSON();
+
+                // Join the CSV data to the county geometries
+                // 1. Loop through the GeoJSON data's features (counties)
+                // 2. For each county, loop through the CSV data
+                // 3. If the county name for the CSV data matches the county name for the county feature, add that CSV data as properties of that county object
+
+                // For each county
+                for (var county in countyBoundaries.features) {
+
+                    // Create a variable to store the properties for the current county object
+                    var props = countyBoundaries.features[county].properties;
+
+                    // Loop through the CSV data
+                    for (var d in countyCentroids.features) {
+
+                        // Create a variable to store the properties for the current record from the CSV file
+                        var csvProps = countyCentroids.features[d].properties;
+
+                        // If the FIPS code for the CSV data matches the FIPS code for the county
+                        if (props.COUNTY == csvProps.County) {
+
+                            // Method 1: Replace the current county properties with the properties of the CSV data
+                            //counties.features[county].properties = data.data[d];
+
+                            // Method 2: Loop through each field in the CSV file. Add the field as a new property in the counties object with the value from the CSV file.
+                            for (var field in csvProps) {
+                                props[field] = csvProps[field];
+                            }
+
+                            // Break out of the inner for loop. Since there will only be one match, once it's found, move onto the next county.
+                            break;
+                        }
+
+                    } // End of loop through CSV data for the current county
+
+                } // End of loop through the counties
+
+                // Call the drawCounties() function to draw the counties (symbolized by their percentage of electricity usage) and add them to the map
+                drawCounties(countyBoundaries);
+            })
+
+            // If the data cannot be loaded or parsed, log an error message to the console
+            .on('error', function (e) {
+                console.log(e.error[0].message);
+            })
+
+        }
+
+        function drawCounties(counties) {
+
+            // Use Leaflet geoJson() method to set an initial style for the Kenya counties
+            countyBoundaries = L.geoJson(counties, {
+                style: function (feature) {
+                    return {
+                        color: '#666666', // set stroke color
+                        weight: 1.5, // set stroke weight
+                        opacity: 0.7, // set stroke opacity
+                        fillOpacity: 0.7, // override default fill opacity
+                    }
+                }
+            });
+
+            // Call the getClassBreaks() function to determine class breaks and assign them to the breaks variable
+            var breaks = getClassBreaks(attribute);
+
+            // Loop through each county (layer) in the GeoJson layer
+            countyBoundaries.eachLayer(function (layer) {
+
+                // Create a shorthand variable to access layer properties
+                var props = layer.feature.properties;
+
+                // Set the county's fill color, calling the getColor() method to determine the appropriate color based on the normalized attribute
+                layer.setStyle({
+                    fillColor: getColor(props[attribute], breaks)
+                });
+
+                countyBoundaries.addTo(map);
+                countyBoundaries.bringToBack();
+
+                infoWindow(breaks);
+
+                drawChoroplethLegend();
+                updateChoroplethLegend(breaks);
+
+            });
+        }
+
+        // Determine values and establish classification breaks
+        function getClassBreaks(attribute) {
+
+            // Create an empty array to store the normalized values
+            var values = [];
+
+            // Loop through each county to get its percentage of households using electricity
+            countyBoundaries.eachLayer(function (layer) {
+
+                // Get the normalized value (no need to normalize since it is a percentage)
+                var countyName = layer.feature.properties.County;
+                var value = layer.feature.properties[attribute];
+
+                // Push each normalized value into the array
+                values.push(value);
+            });
+
+            // Use Simple Statistics to determine 5 class ranges of statistically similar values, sorted in ascending order (5 arrays of values)
+            var clusters = ss.ckmeans(values, 5);
+
+            // Use the JavaScript map() method to create a 2-dimensional array of the break points (lowest and highest values) in each cluster
+            // The lowest value in each cluster is cluster[0]; the highest value is cluster.pop()
+            var breaks = clusters.map(function (cluster) {
+                return [cluster[0], cluster.pop()];
+            });
+
+            // Return the array of class break arrays, e.g. [[0.24,0.25], [0.26, 0.37], etc]
+            return breaks;
+        }
+
+        // Set the color of the features depending on which cluster the value falls into. The function accepts a single normalized data attribute and the class breaks 2-dimensional array and uses a series of conditional statements to determine which color value to return to the function caller.
+        function getColor(d, breaks) {
+
+            // If the data value <= the upper value of the first cluster
+            if (d <= breaks[0][1]) {
+                return '#fef0d9';
+
+                // Otherwise, if the data value <= the upper value of the second cluster    
+            } else if (d <= breaks[1][1]) {
+                return '#fdcc8a';
+
+                // Otherwise, if the data value <= the upper value of the third cluster   
+            } else if (d <= breaks[2][1]) {
+                return '#fc8d59';
+
+                // Otherwise, if the data value <= the upper value of the fourth cluster   
+            } else if (d <= breaks[3][1]) {
+                return '#e34a33';
+
+                // Otherwise, if the data value <= the upper value of the fifth cluster  
+            } else if (d <= breaks[4][1]) {
+                return '#b30000';
+            }
+        }
+
+        // Draw the map with the lighting data
+        function drawCentroids(lightingData) {
+
+            // Create a Leaflet GeoJson layer for electric lighting usage and add it to the map
+            electricLighting = L.geoJson(lightingData, {
+                pointToLayer: function (feature, latlng) {
+                    // Create proportional circle markers whose radii are based on the number of households using electric lighting
+                    return L.circleMarker(latlng, {
+                        color: '#D96D02', // purple
+                        opacity: 1,
+                        weight: 2,
+                        fillOpacity: 0, // no fill
+                    });
+                }
+            }).addTo(map);
+
+            // Create a Leaflet GeoJson layer for traditional lighting usage and add it to the map
+            traditionalLighting = L.geoJson(lightingData, {
+                pointToLayer: function (feature, latlng) {
+                    // Create proportional circle markers whose radii are based on the number of households using traditional lighting
+                    return L.circleMarker(latlng, {
+                        color: '#6E77B0', // orange
+                        opacity: 1,
+                        weight: 2,
+                        fillOpacity: 0, // no fill
+                    });
+                }
+            }).addTo(map);
+
+            electricLighting.bringToFront();
+            traditionalLighting.bringToFront();
+
+            // Set the radius of the symbols
+            updateSymbols();
+
+        }
+
+        // Calculate the radius of each circle marker based on the number of households using the lighting source
+        function calcRadius(val) {
+            var radius = Math.sqrt(val / Math.PI);
+            return radius * scaleFactor;
+        }
+
+        // Set the radius of the symbols based on the number of households using the lighting source
+        function updateSymbols() {
+
+            var radius, // variable to hold each circle's radius
+                allRadii = []; // empty array to hold all radius values
+
+            // Loop through each feature in the electric lighting layer
+            electricLighting.eachLayer(function (layer) {
+
+                // Store a reference to the radius value of the current feature
+                radius = calcRadius(Number(layer.feature.properties['Num_Households_with_Electricity']));
+
+                // Use it to set the radius of the current feature
+                layer.setRadius(radius);
+
+                // Push the current feature's radius into the array
+                allRadii.push(radius);
+            });
+
+            // Loop through each feature in the traditional lighting layer
+            traditionalLighting.eachLayer(function (layer) {
+
+                // Store a reference to the radius value of the current feature
+                radius = calcRadius(Number(layer.feature.properties['Num_Households_with_Traditional']));
+
+                // Use it to set the radius of the current feature
+                layer.setRadius(radius);
+
+                // Push the current feature's radius into the array
+                allRadii.push(radius);
+
+            });
+
+            // Update the legend based on the max, median, and min values for the current grade
+            drawLegend(allRadii);
+
+        }
+
+        // Draw the legend showing three nested circles. Size the circles based on the max, median, and min radius values for the number of households. Label them based on their corresponding raw values.
+        function drawLegend(allRadii) {
+
+            // Select the legend svg element
+            var legend = $('.legend');
+
+            // Create an object called "circles", use Simple Statistics to calculate the max, median, and min values from the allRadii array, and store those values in the circles object
+            var circles = {
+                max: ss.max(allRadii),
+                median: ss.median(allRadii),
+                min: ss.min(allRadii)
+            }
+
+            // Create an empty string callled "svgCircles" to store the HTML and SVG that will draw the proportional circles and their labels in the legend
+            var svgCircles = '';
+
+            // Reverse calculate the raw value based on each radius, so the raw value can be written to the legend instead of the radius value
+            var reverseCalc = function (radius) {
+                return Math.round((Math.pow(radius / scaleFactor, 2) * Math.PI));
+            }
+
+            // Loop through the circles object to get the radius and raw value of the max, median, and min values for the current grade
+            for (var circle in circles) {
+
+                // Circle SVG Variables:
+                // cx = how far the element is moved right from the left edge of the div (use negative numbers to move left)
+                // cy = how far the element is moved up from the the top edge of the div (use negative numbers to move down)
+                // r = radius
+                // stroke = stroke color
+                // stroke-width = stroke width, in pixels
+                // fill = circle fill color
+
+                // Text SVG Variables:
+                // x = how far the element is moved right from the left edge of the div (use negative numbers to move left)
+                // y = how far the element is moved up from the the top edge of the div (use negative numbers to move down)
+                // fill = text color            
+
+                // Concatenate an SVG circle element using the current radius (max, median, or min)
+                svgCircles += '<circle cx="' + 80 + '" cy="' + (circles[circle] - 100) * -1 + '" r="' + circles[circle] + '" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
+
+                // Concatenate an SVG text element using the current raw value from the reverseCalc function (max, median, or min)
+                svgCircles += '<text x="' + 55 + '" y = "' + (circles[circle] - 90) * -1 + '" fill= "#1C9976">' + reverseCalc(circles[circle]) + '</text>';
+            }
+
+            // Add the svgCircles string as HTML to the legend div
+            legend.html(svgCircles);
+
+        }
+
+        // When the user hovers a traditional lighting circle, display the county name and the number and percentage of households with electric and traditional lighting in that county
+        function infoWindow(breaks) {
+
+            // Select the info window div
+            var info = $('#info');
+
+            // Select the details panel div
+            var detailsPanel = $('#detailsPanel');
+
+            // When the user mouses over one of the electric lighting circles
+            traditionalLighting.on('mouseover', function (e) {
+
+                // Access the properties of the selected feature and assign it to the props variable
+                var props = e.layer.feature.properties;
+
+                // Select and display the info window div
+                info.show();
+
+                // Populate the county span tag with the county name for the selected feature
+                $('#info span').text(props.County + ' County');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".electricLighting span:first-child").text(Number((props.Pct_Electricity * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".electricLighting span:last-child").text('(' + props.Num_Households_with_Electricity.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the traditional lighting row with percentage of households using traditional lighting in the selected county
+                $(".traditionalLighting span:first-child").text(Number((props.Pct_Traditional * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the traditional lighting row with the number of households using electric lighting in the selected county
+                $(".traditionalLighting span:last-child").text('(' + props.Num_Households_with_Traditional.toLocaleString() + ' households)');
+
+                // Select and display the details panel div
+                detailsPanel.show();
+
+                // Populate the county span tag with the county name for the selected feature
+                $('#detailsPanel h2').text(props.County + ' County');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".electricity span:first-child").text(Number((props.Pct_Electricity * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".electricity span:last-child").text('(' + props.Num_Households_with_Electricity.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".pressureLamp span:first-child").text(Number((props.Pct_Pressure_Lamp * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".pressureLamp span:last-child").text('(' + props.Num_Households_with_Pressure_Lamp.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".lantern span:first-child").text(Number((props.Pct_Lantern * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".lantern span:last-child").text('(' + props.Num_Households_with_Lantern.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".tinLamp span:first-child").text(Number((props.Pct_Tin_Lamp * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".tinLamp span:last-child").text('(' + props.Num_Households_with_Tin_Lamp.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".gasLamp span:first-child").text(Number((props.Pct_Gas_Lamp * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".gasLamp span:last-child").text('(' + props.Num_Households_with_Gas_Lamp.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".fuelWood span:first-child").text(Number((props.Pct_Fuel_Wood * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".fuelWood span:last-child").text('(' + props.Num_Households_with_Fuel_Wood.toLocaleString() + ' households)');
+
+                // Populate the first span tag in the electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".solar span:first-child").text(Number((props.Pct_Solar * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".solar span:last-child").text('(' + props.Num_Households_with_Solar.toLocaleString() + ' households)');
+
+                // Populate the first span tag in thef electric lighting row with the percentage of households using electric lighting in the selected county
+                $(".other span:first-child").text(Number((props.Pct_Other_Lighting * 100).toLocaleString()) + '%');
+
+                // Populate the last span tag in the electric lighting row with the number of households using electric lighting in the selected county
+                $(".other span:last-child").text('(' + props.Num_Households_with_Other.toLocaleString() + ' households)');
+
+                // Provide an affordance of giving a fill opacity of 60% to the selected circle
+                e.layer.setStyle({
+                    fillOpacity: .6
+                });
+
+                // Loop through each county (layer) in the GeoJson layer
+                countyBoundaries.eachLayer(function (layer) {
+
+                    if (layer.feature.properties.County == props.County) {
+
+                        // Highlight the selected county it by updating its stroke color and stroke weight
+                        layer.setStyle({
+                            fillColor: '#1C9976', // set highlight fill color
+                            opacity: .9, // set highlight stroke opacity to 90%
+                            weight: 4 // set highlight stroke weight
+                        });
+
+                    }
+
+                });
+
+            });
+
+            // When the user mouses off of the traditional lighting circle
+            traditionalLighting.on('mouseout', function (e) {
+
+                // Access the properties of the selected feature and assign it to the props variable
+                var props = e.layer.feature.properties;
+
+                // Hide the info window
+                info.hide();
+
+                // Hide the details panel
+                detailsPanel.hide();
+
+                // Reset the fill opacity back to 0%
+                e.layer.setStyle({
+                    fillOpacity: 0
+                });
+
+                // Loop through each county (layer) in the GeoJson layer
+                countyBoundaries.eachLayer(function (layer) {
+
+                    if (layer.feature.properties.County == props.County) {
+
+                        // Restore the original symbology for the county
+                        layer.setStyle({
+                            fillColor: getColor(props[attribute], breaks), // restore choropleth fill color
+                            opacity: .7, // restore highlight stroke opacity
+                            weight: 1.5 // restore highlight stroke weight
+                        });
+
+                    }
+
+                });
+            });
+
+            // When the user moves the mouse, position the info window next to the cursor
+            $(document).mousemove(function (e) {
+
+                // First offset the info window above and to the right of the current cursor position
+                info.css({
+                    "left": e.pageX + 6, // X coordinate of the cursor + 6px
+                    "top": e.pageY - info.height() - 15 // Y coordinate of the cursor - the height of the info window - 15px
+                });
+
+                // If the info window crashes into the top of the page, flip it to appear below the current cursor position
+                if (info.offset().top < 4) {
+                    info.css({
+                        "top": e.pageY + 15 // Y coordinate of the  cursor + 15px
+                    });
+                }
+
+                // If the info window crashes into the right of the page, flip it to appear to the left the current cursor position
+                if (info.offset().left + info.width() >= $(document).width() - 40) {
+                    info.css({
+                        "left": e.pageX - info.width() - 30 // X coordinate of the cursor - the width of the info window - 30px
+                    });
+                }
+            });
+        }
+
+        // Create the empty choropleth legend    
+        function drawChoroplethLegend() {
+
+            // Create a new Leaflet control object, and position it top right
+            var choroplethLegend = L.control({
+                position: 'topright'
+            });
+
+            // When the empty choropleth legend control is added to the map
+            choroplethLegend.onAdd = function () {
+
+                // Create a new HTML <div> element and give it a class name of "legend"
+                var div = L.DomUtil.create('div', 'choroplethLegend');
+
+                // Return the choroplethLegend <div> element to be added to the map   
+                return div;
+
+            };
+
+            // Add the choropleth legend to the map
+            choroplethLegend.addTo(map);
+        }
+
+        // Populate the choropleth legend    
+        function updateChoroplethLegend(breaks) {
+
+            // Use the JQuery select $() method to select the legend <div> and assign it to the new legend variable
+            var choroplethLegend = $('.choroplethLegend');
+
+            // Use the JQuery html() method to clear the existing contents in the legend <div> and add an <h3> heading tag to the legend <div> that displays the currently selected attribute (i.e., the mapped phenomena)
+            choroplethLegend.html("<h3>% of Households Using Electricity per County</h3>");
+
+            //For each of the class breaks
+            for (var i = 0; i < breaks.length; i++) {
+
+                // Determine the color associated with each break value, using the upper range value
+                var color = getColor(breaks[i][1], breaks);
+
+                // Use the JQuery html() method to add a <span> tag to the choroplethLegend <div> that is styled with the color for that particular class and a <label> with the low and high range values of that particular class
+                choroplethLegend.append(
+                    '<span style="background:' + color + '"></span> ' +
+                    '<label>' + ((breaks[i][0]) * 100).toLocaleString() + ' &mdash; ' +
+                    ((breaks[i][1]) * 100).toLocaleString() + '% </label>');
+            }    
+        }
+        
+    </script>
+</body>
+
+</html>

@@ -56,15 +56,16 @@
                     color: '#0e0e0e', // set stroke color
                     weight: 1.5, // set stroke weight
                     opacity: 0.7, // set stroke opacity
-                    fillOpacity: 0.5, // override default fill opacity
-                    fillColor: '#ffffbf' // set fill color
+                    //fillOpacity: 0.5, // override default fill opacity
+                    //fillColor: '#ffffbf' // set fill color
+                    fill: false
                 }
             }
         });
         
         // Use the Omnivore plugin to load the counties GeoJSON data with their initial style
         // See Custom Layers in https://github.com/mapbox/leaflet-omnivore
-        var countyBoundaries =  omnivore.geojson('kenya_counties.geojson', null, countyBoundariesStyle);
+        var countyBoundaries = omnivore.geojson('kenya_counties.geojson', null, countyBoundariesStyle);
         
         // Add the styled counties layer to the map
         countyBoundaries.addTo(map);
