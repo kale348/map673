@@ -607,6 +607,7 @@
                 svgCircles += '<circle cx="' + 80 + '" cy="' + (circles[circle] - 75) * -1 + '" r="' + circles[circle] + '" stroke="#ff6600" stroke-width="2" fill="ghostwhite" />';
 
                 // Concatenate an SVG text element using the current raw value from the reverseCalc function (max, median, or min)
+                svgCircles += '<text x="' + 80 + '" y = "' + (circles[circle] - 65) * -1 + '" fill="green" font-size="12" text-anchor="middle" stroke="green" stroke-width=".2px">' + reverseCalc(circles[circle]) + '</text>';
             }
 
             // Add the svgCircles string as HTML to the legend div
