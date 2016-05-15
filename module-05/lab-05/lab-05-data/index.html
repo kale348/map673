@@ -30,7 +30,6 @@
             padding: 0;
             background: whitesmoke;
             font-family: "Work Sans", sans-serif;
-            text-align: right;
         }
         
         h1 {
@@ -120,7 +119,7 @@
             color: #3d3d3d;
             position: absolute;
             font-size: 1em;
-            max-width: 500px;
+            max-width: 300px;
             display: none;
             /* don't display until the user mouses over a county */
             text-align: left;
@@ -134,16 +133,13 @@
         /* electric lighting line of the info window */
         
         .electricLighting {
-            color: #ff6600;
-            /* orange */
+            color: #ff6600; /* orange */            
         }
         /* traditional lighting line of the info window */
         
         .traditionalLighting {
             color: green;
-            /* green */
         }
-        /* last span tag of the each line of the info window (e.g. the county name and electric and traditional lighting usage data) */
         
         #info span:first-child {
             font-size: 1.3em;
@@ -160,8 +156,7 @@
             max-width: 32%;
             max-height: 350px;
             font-size: 0.9em;
-            display: none;
-            /* don't display until the user mouses over a county */
+            display: none; /* don't display until the user mouses over a county */
             overflow-y: hidden;
         }
         
@@ -184,16 +179,14 @@
         }
         
         /* electric lighting line of the info window */
-        
         #detailsPanel h2 .electricLighting {
             color: #ff6600;
             /* orange */
         }
-        /* traditional lighting line of the info window */
         
+        /* traditional lighting line of the info window */
         #detailsPanel h2 .traditionalLighting {
             color: green;
-            /* green */
         }
         
         #detailsPanel p {
@@ -255,7 +248,7 @@
         <h2>Electric and Traditional Lighting Usage per County in 2009</h2>
 
         <h2>About this map</h2>
-        <p>This map shows the prevalence of electric lighting and traditional lighting (pressure lamp, lantern, tin lamp, gas lamp, fuel/wood, solar, and other lighting energy sources) across Kenyan counties in 2009. Hover over a county to see the percentage and number of its households using each lighting source.</p>
+        <p>This map shows the prevalence of <span class="electricLighting"><b>electric lighting</b></span> and <b><span class="traditionalLighting">traditional lighting</b></span> (pressure lamp, lantern, tin lamp, gas lamp, fuel/wood, solar, and other lighting energy sources) across Kenyan counties in 2009. Hover over a county to see the percentage and number of its households using each lighting source.</p>
 
         <h2>About the data</h2>
         <p>The number and percentage of households using electricity and traditional lighting come from the <a href="https://www.opendata.go.ke/en/" target="_blank">Kenya Open Data Portal</a>. Data was acquired from the <a href="https://www.opendata.go.ke/Distribution-and-Consumption/Main-Lighting-Energy-Sources-averaged-to-Counties-/g9hi-bs9n" target="_blank">"Main Lighting Energy Sources averaged to Counties in 2009"</a> dataset. The data present a spatial distribution of lighting energy usage across Kenya.</p>
@@ -276,8 +269,8 @@
     <!-- Create the info window div, which will display the county name, and the percentage and number of households using electric and traditional lighting in the selected county-->
     <div id="info">
         <p><span></span></p>
-        <p class="electricLighting">Electric Lighting: <span></span> <span></span></p>
-        <p class="traditionalLighting">Traditional Lighting: <span></span> <span></span></p>
+        <p class="electricLighting">Electric Lighting: <span></span><br/> <span></span></p>
+        <p class="traditionalLighting">Traditional Lighting: <span></span><br/> <span></span></p>
     </div>
 
     <!-- Create the details panel div, which will display the county name, and the percentage and number of households using each lighting energy source in the selected county-->
@@ -292,7 +285,7 @@
         <p class="gasLamp">Gas Lamp: <span></span> <span></span></p>
         <p class="fuelWood">Fuel/Wood: <span></span> <span></span></p>
         <p class="solar">Solar: <span></span> <span></span></p>
-        <p class="other">Other Lighting Source: <span></span> <span></span></p>
+        <p class="other">Other Lighting Sources: <span></span> <span></span></p>
     </div>
 
     <script>
@@ -430,15 +423,15 @@
                 
                 // Move the county boundaries to the back of the layer order
                 countyBoundaries.bringToBack();
-
-                // Generate the info window and details panel, display them on mouseover and hide them on mouseout
-                infoWindowAndDetailsPanel(breaks);
                 
                 // Draw the empty choropleth legend
                 drawChoroplethLegend();
                 
                 // Populate the choropleth legend
-                updateChoroplethLegend(breaks);
+                updateChoroplethLegend(breaks);                
+
+                // Generate the info window and details panel, display them on mouseover and hide them on mouseout
+                infoWindowAndDetailsPanel(breaks);
 
             });
         }
@@ -614,7 +607,6 @@
                 svgCircles += '<circle cx="' + 80 + '" cy="' + (circles[circle] - 75) * -1 + '" r="' + circles[circle] + '" stroke="#ff6600" stroke-width="2" fill="ghostwhite" />';
 
                 // Concatenate an SVG text element using the current raw value from the reverseCalc function (max, median, or min)
-                svgCircles += '<text x="' + 55 + '" y = "' + (circles[circle] - 65) * -1 + '" fill= "green">' + reverseCalc(circles[circle]) + '</text>';
             }
 
             // Add the svgCircles string as HTML to the legend div
