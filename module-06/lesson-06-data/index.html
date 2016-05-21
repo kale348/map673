@@ -1,27 +1,137 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>673 Module 06 CartoDB Starter Template</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
-    
+
     <style>
-      html, body, #map {
-        height: 100%;
-        padding: 0;
-        margin: 0;
-      }
+        html,
+        body,
+        #map {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: #3d3d3d;
+        }
     </style>
 </head>
+
 <body>
-    
+
     <div id="map"></div>
 
     <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
-    <script>
+    
+    <script type="cartocss/html" id="counties-styles">
+        /** choropleth visualization */
 
+        #uninsured_adults{
+          polygon-fill: #FFFFB2;
+          polygon-opacity: 0.7;
+          line-color: #FFF;
+          line-width: 0;
+          line-opacity: 1;
+        }
+        #uninsured_adults [ uninsured <= 42] {
+           polygon-fill: #B10026;
+        }
+        #uninsured_adults [ uninsured <= 36] {
+           polygon-fill: #E31A1C;
+        }
+        #uninsured_adults [ uninsured <= 29] {
+           polygon-fill: #FC4E2A;
+        }
+        #uninsured_adults [ uninsured <= 24] {
+           polygon-fill: #FD8D3C;
+        }
+        #uninsured_adults [ uninsured <= 18] {
+           polygon-fill: #FEB24C;
+        }
+        #uninsured_adults [ uninsured <= 13] {
+           polygon-fill: #FED976;
+        }
+        #uninsured_adults [ uninsured <= 8] {
+           polygon-fill: #FFFFB2;
+        }
     </script>
+
+    <script>
+        
+        var map = new L.Map("map", {
+            center: [40, -100],
+            zoom: 4
+        });
+        
+//        var cartoCSS = '#uninsured_adults{'+
+//            'polygon-fill: #FFFFB2;'+
+//            'polygon-opacity: 0.7;'+
+//            'line-color: #FFF;'+
+//            'line-width: 0;'+
+//            'line-opacity: 1;'+
+//            '}';
+//        
+//        var gratCartoCSS = '#na_grat_clipped{'+
+//            'line-color: #666666;'+
+//            'line-width: 1;'+
+//            'line-opacity: 0.7;'+
+//            '}';
+//        
+//        var landCartoCSS = '#na_land_clipped{'+
+//            'polygon-fill: #222222;'+
+//            'polygon-opacity: 0.7;'+
+//            'line-color: #FFF;'+
+//            'line-width: 0;'+
+//            'line-opacity: 1;'+
+//            '}';
+//        
+//        var sourceObject = {
+//            user_name: 'skeetidot',
+//            type: 'cartodb',
+//            sublayers: [
+//                {
+//                    sql: "SELECT ST_Transform(the_geom, 2163) AS the_geom_webmercator FROM na_grat_clipped",
+//                    cartocss: gratCartoCSS         
+//                },
+//                {
+//                    sql: "SELECT ST_Transform(the_geom, 2163) AS the_geom_webmercator FROM na_land_clipped",
+//                    cartocss: landCartoCSS
+//                },
+//                {
+//                    sql: "SELECT ST_Transform(the_geom, 2163) AS the_geom_webmercator, cartodb_id, uninsured FROM uninsured_adults",
+//                    cartocss: $("#counties-styles").text()                    
+//                }
+//            ]
+//        }
+//        
+//        cartodb.createLayer(map, sourceObject).addTo(map);
+        
+//        $.getJSON('https://skeetidot.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM uninsured_adults', function(data) {
+//            console.log(data);
+//            L.geoJson(data).addTo(map);
+//        });
+        
+        $.getJSON('https://skeetidot.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM uninsured_adults', function(data) {
+            console.log(data); // you have access to the geojson data here!
+            L.geoJson(data, {
+                style: function (feature) {
+                    return {
+                        fillColor: '#ffffff',
+                        color: '#3d3d3d',
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 1                    
+                    }
+                }
+            }).addTo(map); // and you can simply use that GeoJSON 
+            // data to make a regular Leaflet map     
+        });        
+        
+    </script>
+
 </body>
+
 </html>
