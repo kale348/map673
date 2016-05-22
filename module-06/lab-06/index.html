@@ -339,6 +339,7 @@
                 // Get the counties with bridges sublayer (sublayer 1)
                 var counties = layer.getSubLayer(1);
                 
+                // Add infowindow interactivity to the counties with bridges sublayer. Choose the columns to display and specify the infowindow template.
                 cartodb.vis.Vis.addInfowindow(map, counties, ['name', 'percent_dem'], {
                     infowindowTemplate: $('#counties_infowindow_template').text()
                 });
@@ -346,6 +347,7 @@
                 // Get the bridge points sublayer (sublayer 3)
                 var bridges = layer.getSubLayer(3);
             
+                // Add infowindow interactivity to the bridge points sublayer. Choose the columns to display and specify the infowindow template.
                 cartodb.vis.Vis.addInfowindow(map, bridges, ['feature_descr', 'cty', 'dist', 'type', 'status'], {
                     infowindowTemplate: $('#bridges_infowindow_template').text()
                 });
