@@ -271,16 +271,20 @@
 
     <script>
         
+        // Instantiate the map, centered in Pennsylvania
         var map = new L.Map("map", {
             center: [41, -77.6],
-            zoom: 8
+            zoom: 8,
+            minZoom: 8
         });
         
+        // Add tiles
         var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
             maxZoom: 16
         }).addTo(map);
 
+        // Create the CartoDB source object, which each sublayer being a layer in the CartoDB map
         var sourceObject = {
             user_name: 'skeetidot',
             type: 'cartodb',
@@ -304,14 +308,21 @@
             ]
         }
         
+        // Create the CartoDB layer based on the source object and add it to the map
         cartodb.createLayer(map, sourceObject, {
             legends: true           
         })
         
             .on('done', function(layer) {
-               // get sublayer 0 and set the legend template
-               var sublayer = layer.getSubLayer(0);
-               sublayer.infowindow.set('template', $('#cartodb-legend-stacked').html());
+                // get sublayer 0 and set the legend template
+                var sublayer = layer.getSubLayer(0);
+                sublayer.infowindow.set('template', $('#cartodb-legend-stacked').html());
+            
+//                sublayer.legend({
+//                    template: $('.cartodb-legend').html(),
+//                    width: 218,
+//                    maxHeight: 100
+//                });
             })
         
             .on('error', function() {
