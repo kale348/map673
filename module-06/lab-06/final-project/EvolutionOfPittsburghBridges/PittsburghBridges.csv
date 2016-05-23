@@ -1,0 +1,145 @@
+Page_Number,Bridge,Type,Year_Built,Year_Demolished,Latitude,Longitude,River,River_Name,Photo_Path,Notes
+14,Union Bridge,Covered,1875,1907,40.443668,-80.013216,Y,Allegheny,Photos/Point/Union.jpg,"The first bridge to be constructed at the Point was the Union Bridge over the Allegheny River. The bridge was the last wooden covered river bridge built in Pittsburgh. In 1902, it was declared an obstruction to navigation, as its clearance dropped to seven feet during high water."
+15,First Point Bridge,Suspension,1877,1927,40.440397,-80.013569,Y,Monongahela,Photos/Point/First_Point.jpg,"The Point Bridge Company was chartered in 1874 to span the Monongahela River. The resulting suspension bridge had an 83-foot vertical clearance to accommodate navigational needs. Unlike other suspension bridges, the catenaries were stiffened by trusses, allowing the bridge to be built for half the cost of comparable bridges."
+16,Manchester Bridge,Thru Truss,1915,1970,40.443853,-80.012428,Y,Allegheny,Photos/Point/Manchester.jpg,"The replacement to the Union Bridge opened in 1915. Its two spans were constructed at different times to keep the river open for navigation. Upon completion, the 531-foot-long spans were among the longest in America. Stone portals were originally intended to be built at each portal. To reduce cost, metal sculptures were installed instead."
+18,Second Point Bridge,Thru Truss,1927,1970,40.440254,-80.013322,Y,Monongahela,Photos/Point/Second_Point.jpg,The first Point Bridge was replaced by a larger structure in 1927. The city’s art commission mandated a design complementary to the Manchester Bridge to create a more unified appearance at the Point. The bridge was demolished in 1970 as part an urban renewal project that included the creation of Point State Park. 
+20,Portal Bridge,,1963,,40.441506,-80.008975,N,,,
+21,Fort Pitt Bridge,Arch,1959,,40.438944,-80.01115,Y,Monongahela,Photos/Point/Fort_Pitt.jpg,"In order to develop the Point into a park, bridges needed to be replaced with ones located further from the Point. Double-decked bridges eliminated the need for intrusive flyover ramps. The innovative Fort Pitt Bridge was the first double-decked tied arch bridge and one of the earliest bridges designed with computer calculations."
+23,Fort Duquesne Bridge,Arch,1969,,40.444294,-80.009307,Y,Allegheny,Photos/Point/Fort_Duquesne.jpg,"The Fort Duquesne Bridge was designed to match the Fort Pitt Bridge. After over 40 years of planning, the new vision for the Point was fulfilled with the completion of the Fort Duquesne Bridge in 1969 and Point State Park in 1974. The Point became part of Pittsburgh’s identity, a public space uniting engineering, urban planning, landscape architecture, and art.  "
+24,Point Concept,,,,40.441897,-80.013272,N,,,
+26,First Sixth Street (St. Clair Street) Bridge,Covered,1819,1857,40.4456,-80.00336,Y,Allegheny,Photos/Allegheny/First_Sixth_Street.jpg,Pittsburgh’s first bridge over the Allegheny River was Lewis Wernwag’s 1819 covered bridge at St. Clair (Sixth) Street. 
+26,Second Sixth Street (St. Clair Street) Bridge,Suspension,1859,1892,40.4456,-80.00336,Y,Allegheny,Photos/Allegheny/Second_Sixth_Street.jpg,"Pittsburgh's first bridge over the Allegheny River, an 1819 covered bridge, was replaced by John Roebling’s 1859 suspension bridge (pictured). The bridge company’s director felt that an attractive Roebling bridge would increase revenue. He was right."
+26,Third Sixth Street Bridge,Thru Truss,1892,1927,40.4456,-80.00336,Y,Allegheny,Photos/Allegheny/Third_Sixth_Street.jpg,"By the 1890s, Roebling’s bridge was unable to carry the heavier electric trolleys. The replacement bridge by Theodore Cooper was built around Roebling’s bridge. Construction took 95 days. The bridge was dismantled in 1927 onto barges, floated along the river to be reused at another location."
+28,First Seventh Street Bridge,Suspension,1885,1925,40.446,-80.00141,Y,Allegheny,Photos/Allegheny/First_Seventh_Street.jpg,"By the 1880s, Pittsburgh and Allegheny City (now North Side) had grown to the point that investors felt there would be enough traffic for a crossing at Seventh Street. Gustav Lindenthal, who was working on the 1883 Smithfield Street Bridge, designed the suspension bridge."
+29,First Ninth Street (Hand Street) Bridge,Covered,1839,1890,40.4466,-79.99978,Y,Allegheny,Photos/Allegheny/First_Ninth_Street.jpg,The first Hand (Ninth) Street Bridge was an 1839 wooden covered bridge.
+29,Second Ninth Street Bridge,Thru Truss,1889,1925,40.4466,-79.99978,Y,Allegheny,Photos/Allegheny/Second_Ninth_Street.jpg,"The first Hand (Ninth) Street Bridge was an 1839 wooden covered bridge. Pleasant Valley Electric Street Railway Company needed to replace its superstructure with stronger steel trusses to carry trolleys. The 1890 Baltimore truss (pictured) was designed by Ferris, Kaufman & Company. Ferris began designing the Ferris wheel a year later."
+32,Andy Warhol Bridge (Seventh Street Bridge),Suspension,1926,,40.4466,-79.99978,Y,Allegheny,Photos/Allegheny/Andy_Warhol.jpg,"In 1917, the US secretary of war mandated the replacement of low Allegheny River Bridges, including the Sixth, Seventh, and Ninth Street Bridges. The Municipal Art Commission vetoed initial designs, preferring three identical suspension bridges that minimized structural members above the bridge decks, preserving views of the city from the bridges. Engineers encountered unsatisfactory conditions for anchorages, so they designed the country's first self-anchored suspension bridges.
+
+The Sixth Street Bridge was completed in 1928 and the Seventh and Ninth Street bridges in 1926. Known as the “Three Sisters,” the bridges have received many awards and commendations and have been featured in movies.
+
+They are now named after baseball legend Roberto Clemente, artist Andy Warhol, and environmentalist Rachel Carson."
+33,Roberto Clemente Bridge (Sixth Street Bridge),Suspension,1928,,40.4456,-80.00336,Y,Allegheny,Photos/Allegheny/Roberto_Clemente.jpg,"In 1917, the US secretary of war mandated the replacement of low Allegheny River Bridges, including the Sixth, Seventh, and Ninth Street Bridges. The Municipal Art Commission vetoed initial designs, preferring three identical suspension bridges that minimized structural members above the bridge decks, preserving views of the city from the bridges. Engineers encountered unsatisfactory conditions for anchorages, so they designed the country's first self-anchored suspension bridges.
+
+The Sixth Street Bridge was completed in 1928 and the Seventh and Ninth Street bridges in 1926. Known as the “Three Sisters,” the bridges have received many awards and commendations and have been featured in movies.
+
+They are now named after baseball legend Roberto Clemente, artist Andy Warhol, and environmentalist Rachel Carson."
+33,Rachel Carson Bridge (Ninth Street Bridge),Suspension,1928,,40.4466,-79.99978,Y,Allegheny,Photos/Allegheny/Rachel_Carson.jpg,"In 1917, the US secretary of war mandated the replacement of low Allegheny River Bridges, including the Sixth, Seventh, and Ninth Street Bridges. The Municipal Art Commission vetoed initial designs, preferring three identical suspension bridges that minimized structural members above the bridge decks, preserving views of the city from the bridges. Engineers encountered unsatisfactory conditions for anchorages, so they designed the country's first self-anchored suspension bridges.
+
+The Sixth Street Bridge was completed in 1928 and the Seventh and Ninth Street bridges in 1926. Known as the “Three Sisters,” the bridges have received many awards and commendations and have been featured in movies.
+
+They are now named after baseball legend Roberto Clemente, artist Andy Warhol, and environmentalist Rachel Carson."
+34,First Fort Wayne Railroad Bridge,Wooden,1857,1864,40.44807,-79.996081,Y,Allegheny,,"The Ohio & Pennsylvania Railroad, chartered in 1848, was connected to Pittsburgh in 1857 via a wooden bridge over the Allegheny River. "
+34,Second Fort Wayne Railroad Bridge,Lattice Girder,1864,1904,40.44807,-79.996081,Y,Allegheny,Photos/Allegheny/Second_Fort_Wayne.jpg,"The Ohio & Pennsylvania Railroad, chartered in 1848, was connected to Pittsburgh in 1857 via a wooden bridge over the Allegheny River. The company became the Pittsburgh, Fort Wayne & Chicago Railway, which replaced the wooden bridge in 1864 with a wrought iron lattice-girder (pictured) that lasted until 1904."
+35,Fort Wayne Railroad Bridge,Thru Truss,1904,,40.44807,-79.996081,Y,Allegheny,Photos/Allegheny/Fort_Wayne.jpg,"To accommodate railroad expansion and heavier locomotives, the 1904 Fort Wayne Railroad Bridge had two decks, separating local and through train traffic. In 1917, the War Department mandated that the bridge be raised 13 feet. Spans were simultaneously raised 3 to 15 inches per day over a period of six months."
+36,Allegheny Aqueduct,Aqueduct,1829,1845,40.448578,-79.995335,Y,Allegheny,,Pittsburgh leaders campaigned in the state legislature to build a canal to Philadelphia. The first wooden aqueduct was built in 1829.
+36,Allegheny Aqueduct,Aqueduct,1845,1857,40.448578,-79.995335,Y,Allegheny,Photos/Allegheny/Allegheny_Aqueduct.jpg,"Pittsburgh leaders campaigned in the state legislature to build a canal to Philadelphia. The first wooden aqueduct was built in 1829. Its replacement by John Roebling (pictured) was built in 1845, launching his renowned bridge-engineering career."
+37,Veterans Memorial Bridge,Beam,1989,,40.449806,-79.993294,Y,Allegheny,Photos/Allegheny/Veterans.jpg,"First envisioned in the 1930s, Crosstown Boulevard (I-579) was designed and constructed in the 1950s and 1960s to connect the Liberty Bridge to the planned East Street Valley Expressway. The bridge opened in 1989. It is Pittsburgh’s only major steel girder river crossing."
+37,Mechanic Street Bridge,Covered,1837,1919,40.4515,-79.99067,Y,Allegheny,Photos/Allegheny/Sixteenth_Street_Covered.jpg,"Pittsburgh’s second vehicular bridge over the Allegheny River was the Mechanic (now Sixteenth) Street Bridge, constructed in 1837. It was a covered wooden bridge, which had to be rebuilt after an 1851 fire, and again following a flood in 1865. Deemed an obstruction to navigation in 1917, the bridge was destroyed by fire in 1919."
+37,Sixteenth Street Bridge,Arch,1923,,40.4515,-79.99067,Y,Allegheny,Photos/Allegheny/Sixteenth_Street.jpg,"The present Sixteenth Street Bridge was completed in 1923. The bridge was Pittsburgh’s first tied-arch bridge. Civic bodies, such as Pittsburgh’s art commission, requested that architects oversee the bridge’s design, advocating that civic bridges should be not just functional, but also beautiful."
+39,West Penn (Herr's Island) Railroad Bridge,Thru Truss,1903,,40.460266,-79.981692,Y,Allegheny,Photos/Allegheny/West_Penn_Railroad.jpg,"Stockyards were constructed on Herr’s Island beginning in 1885. The West Penn Railroad extended a spur to the island in 1890. The Pennsylvania Railroad acquired West Penn in 1903, consolidated its East Liberty stockyards on the island, and replaced the bridge with a Pratt truss. Abandoned in 1965, the bridge was rehabilitated and reopened for pedestrians in 1999."
+39,30th Street Bridge,Thru Truss,1887,1921,40.46216,-79.976595,Y,Allegheny,Photos/Allegheny/30th_Street.jpg,"In 1887, a bridge designed by Gustav Lindenthal was constructed over the Allegheny River’s main channel from Thirtieth Street in Lawrenceville to Herr’s Island, where stockyards and slaughterhouses were being developed. The wooden deck caught fire in 1921, destroying the bridge as well as several coal barges that were docked below."
+40,Herr's Island Bridge,Truss,1883,1939,40.463968,-79.979174,N,,,
+40,Herr's Island (30th Street Bridge),Truss,1939,1986,40.463968,-79.979174,N,,,
+40,Herr's Island (30th Street Bridge),Steel Girder,1986,,40.463968,-79.979174,N,,,
+41,31st Street Bridge,Arch,1928,,40.463013,-79.975943,Y,Allegheny,Photos/Allegheny/31st_Street.jpg,"The replacement to the 30th Street Bridge was designed to be a through truss, but Pittsburgh’s art commission rejected the concept in 1923, preferring arches beneath the road and unobstructed views from the deck. This required a longer, costlier bridge at 31st Street that could not directly connect to Herr’s Island."
+42,Pittsburgh Junction Railroad Bridge (Back Channel),Truss,1884,,40.468389,-79.975644,N,,,
+42,Pittsburgh Junction Railroad Bridge,Thru Truss,1884,1923,40.465589,-79.973513,Y,Allegheny,Photos/Allegheny/First_Pittsburgh_Junction_Railroad.jpg,"The American Bridge Company replaced an 1884 bridge with this Warren truss bridge in 1921-1923, after its predecessor was declared an obstruction to navigation. To provide nearly level grades for locomotives, the higher bridge stretched nearly 4,300 feet and crossed above Herr’s Island."
+42,Pittsburgh Junction Railroad Bridge,Thru Truss,1923,,40.465589,-79.973513,Y,Allegheny,Photos/Allegheny/Pittsburgh_Junction_Railroad.jpg,"The American Bridge Company replaced an 1884 bridge with this Warren truss bridge in 1921-1923, after its predecessor was declared an obstruction to navigation. To provide nearly level grades for locomotives, the higher bridge stretched nearly 4,300 feet and crossed above Herr’s Island."
+43,Washington's Crossing Bridge,Arch,1924,,40.4728,-79.9686,Y,Allegheny,Photos/Allegheny/Washington_Crossing.jpg,"The Washington Crossing Bridge opened in 1924, 171 years to the day George Washington crossed the Allegheny River nearby. Embellishments included obelisks, escutcheons concealing hinges, and railings with the seals of America’s 13 original colonies and Allegheny County."
+43,43rd Street Bridge,Covered,1870,1924,40.475208,-79.966726,Y,Allegheny,Photos/Allegheny/43rd_Street.jpg,"In 1870, a covered wooden toll bridge was constructed across the Allegheny River connecting 43rd (Ewalt) Street in Lawrenceville with Millvale Borough. It was declared an obstruction to navigation in 1917 because of its short spans and low vertical clearance."
+44,First Sharpsburg Bridge,Covered,1856,1900,40.491022,-79.93802,Y,Allegheny,Photos/Allegheny/First_Sharpsburg_Cridlebaugh.jpg,An 1856 wooden covered bridge was replaced by the higher Sharpsburg Bridge in 1899-1900.
+44,Second Sharpsburg Bridge,Thru Truss,1900,1962,40.491022,-79.93802,Y,Allegheny,Photos/Allegheny/Second_Sharpsburg.jpg,"An 1856 wooden covered bridge was replaced by the higher Sharpsburg Bridge (pictured) in 1899-1900. The bridge had a 366-foot Pennsylvania truss main span, a 226-foot Parker truss side span, and deck truss and girder approaches. By 1960, it was unable to handle increasing taffic."
+44,Robert D. Fleming Bridge,Deck Truss,1962,,40.491022,-79.93802,Y,Allegheny,Photos/Allegheny/Robert_Fleming.jpg,"Completed in July 1962, the cantilevered Warren truss bridge has a 400-foot main span and a 2,016-foot total length. The bridge was built as part of a larger project to bypass river towns with expressways along Routes 8 and 28. The bridge is named after Robert D. Fleming, a politician from Sharpsburg."
+45,First Highland Park Bridge,Thru Truss,1902,1939,40.490456,-79.918727,Y,Allegheny,Photos/Allegheny/First_Highland_Park.jpg,"The first Highland Park Bridge, designed by Herman Laub, was constructed in 1902 between Pittsburgh and Sharpsburg. The bridge was 1,850 feet long, crossing over Sixmile Island in the Allegheny River. The main-channel span was a cantilever through truss."
+46,Brilliant Cutoff Railroad Bridge,Thru Truss,1904,,40.486618,-79.905343,Y,Allegheny,Photos/Allegheny/Brilliant_Railroad.jpg,"Pennsylvania Railroad’s Brilliant Cutoff was constructed from 1903 to 1904, designed as an eastern bypass for rail congestion in downtown Pittsburgh. The line's Allegheny River Bridge is a three-span Parker through truss. The railroad eventually abandoned the Brilliant Cutoff, which was purchased by the Allegheny Valley Railroad in 1995."
+46,Highland Park Bridge,Deck Truss,1939,,40.489064,-79.912169,Y,Allegheny,Photos/Allegheny/Highland_Park.jpg,"The new Highland Park Bridge opened in June 1939. The deck cantilever truss consists of five river spans, each 278 feet long. Since the bridge was built near a lock, it was not required to have a 400-foot main span like other Allegheny River bridges built in Pittsburgh after 1917."
+48,Wabash Bridge,Thru Truss,1904,1948,40.437426,-80.007102,Y,Monongahela,Photos/Allegheny/Wabash.jpg,"The 1904 Wabash Bridge was an early long-span cantilever bridge, constructed for the Wabash Pittsburgh Terminal Railway, which went bankrupt in 1908. Rail traffic continued on the bridge until 1946, when a massive fire destroyed its rail facilities in Pittsburgh. The bridge was demolished in 1948."
+48,Monongahela Bridge,Covered,1818,1845,40.435,-80.00204,Y,Monongahela,Photos/Allegheny/First_Monongahela_Covered.jpg,The original 1818 wooden covered bridge at Smithfield Street burned in Pittsburgh’s Great Fire of 1845.
+48,Monongahela Bridge,Suspension,1846,1881,40.435,-80.00204,Y,Monongahela,Photos/Allegheny/Second_Monongahela.jpg,The original 1818 wooden covered bridge at Smithfield Street burned in Pittsburgh’s Great Fire of 1845. John Roebling was hired to design its replacement by fitting an iron suspension bridge atop the previous bridge’s piers. It was Roebling’s first vehicular suspension bridge.
+49,Smithfield Street Bridge,Thru Truss,1883,,40.435,-80.00204,Y,Monongahela,Photos/Allegheny/Smithfield_Street.jpg,"The Smithfield Street Bridge opened in 1883 and was a landmark from the start. Most early 1880s bridges were made from wrought iron, but Lindenthal specified that the highest quality open-hearth steel be used. The bridge is the longest-spanning lenticular truss in the United States and is a National Historic Landmark."
+53,First Panhandle Railroad Bridge,Thru Truss,1863,1903,40.433188,-79.998048,Y,Monongahela,Photos/Allegheny/First_Panhandle.jpg,"Construction began on the Pittsburgh & Steubenville Railroad Monongahela River Bridge in 1856 and was completed in 1863. The bridge’s main span, built by Pittsburgh’s Keystone Bridge Company, consisted of a cast iron and wrought iron Whipple through truss with tubular members."
+53,Panhandle Railroad Bridge,Thru Truss,1903,,40.433188,-79.998048,Y,Monongahela,Photos/Allegheny/Panhandle.jpg,"The Pittsburgh & Steubenville Railroad became Pennsylvania Railroad’s Panhandle Division, named for its route through West Virginia’s Panhandle. In 1903, the previous bridge was replaced with the current pin-connected Pennsylvania truss, built by the American Bridge Company. It now carries light rail transit."
+54,Liberty Bridge,Deck Truss,1928,,40.432878,-79.99673,Y,Monongahela,Photos/Allegheny/Liberty.jpg,Mt. Washington formed a barrier to development south of Pittsburgh. The Liberty Bridge and Tunnels were constructed to create a high capacity vehicular route to the South Hills. The Liberty Bridge was the largest and most expensive bridge constructed over Pittsburgh’s rivers upon its completion in 1928.
+56,First Tenth Street Brige,Covered,1861,1904,40.4326,-79.98926,Y,Monongahela,Photos/Allegheny/First_Tenth_Street.jpg,An 1861 covered bridge at present-day Tenth Street was Pittsburgh’s second Monongahela River crossing.
+56,Second Tenth Street Bridge,Thru Truss,1904,1931,40.4326,-79.98926,Y,Monongahela,Photos/Allegheny/Second_Tenth_Street.jpg,An 1861 covered bridge at present-day Tenth Street was Pittsburgh’s second Monongahela River crossing. It was replaced by the steel truss bridge (pictured) in 1904. The bridge had a Pennsylvania truss main span flanked by a Parker truss to the north and Pratt trusses to the south.
+56,Tenth Street Bridge,Suspension,1933,,40.4326,-79.98926,Y,Monongahela,Photos/Allegheny/Tenth_Street.jpg,"The 1933 Tenth Street Bridge was the first cable suspension bridge built in Pittsburgh since the city’s Roebling-designed bridges of the mid-1800s. The city’s art commission advocated the suspension design. The bridge, designed by George Richardson, has a main span of 725 feet, the longest over the Monongahela River."
+58,Brady Street Bridge,Thru Truss,1896,1978,40.433106,-79.973144,Y,Monongahela,Photos/Allegheny/Brady_Street.jpg,"After Birmingham (South Side) was annexed by Pittsburgh in 1868, residents were frustrated that all Monongahela River bridges into the city had tolls. After years of agitation, the Brady Street Bridge was built as Pittsburgh’s first free river ridge."
+59,Birmingham Bridge,Arch,1976,,40.433361,-79.9735,Y,Monongahela,Photos/Allegheny/Birmingham.jpg,"The 607-foot tied arch Birmingham Bridge was completed in 1976, seven years after its piers were constructed. Planned to be part of a highway from the South Side through Oakland to the Allegheny River valley, the bridge has stubs for ramps that were never built."
+60,Monongahela Connecting Railroad Bridge (Hot Metal Street Bridge),Thru Truss,1887,1901,40.428366,-79.960593,Y,Monongahela,,The steelmaking process was streamlined when a hot-metal bridge was constructed in 1887 to carry molten iron between factories across the river.
+60,Monongahela Connecting Railroad Bridge (Hot Metal Street Bridge),Thru Truss,1901,,40.428366,-79.960593,Y,Monongahela,Photos/Allegheny/Hot_Metal.jpg,"The 1887 bridge was replaced in 1901 and widened with an upstream bridge in 1904. The bridges now carry vehicular, pedestrian, and bicycle traffic."
+61,First Glenwood Bridge,Thru Truss,1895,1968,40.397517,-79.935469,Y,Monongahela,Photos/Allegheny/First_Glenwood.jpg,"The Glenwood Bridge Company was chartered to construct a bridge across the Monongahela River between Glenwood and Hays. Completed in 1895, the bridge carried streetcars until 1964. The main Pennsylvania truss span was 517 feet long, one of the longest simple spans built anywhere at the time."
+61,Glenwood Bridge,Deck Truss,1968,,40.397517,-79.935469,Y,Monongahela,Photos/Allegheny/Glenwood.jpg,"The second Glenwood Bridge, designed by Richardson, Gordon & Associates, opened on December 20, 1968. It was planned for a highway that was never built. Truss members are formed of welded steel box sections, the first such use in the region."
+62,First B&O Railroad Bridge,Thru Truss,1884,1915,40.398198,-79.931331,Y,Monongahela,Photos/Allegheny/First_B_O_Railroad.jpg,"A Monongahela River crossing was constructed for the Wheeling Branch of the Baltimore & Ohio Railroad between Hays and Glenwood in 1884 to connect its main line in Washington, Pennsylvania, with its Glenwood Yard and its line along the river. Here, the original Whipple truss is being replaced by the current Pennsylvania-truss bridge in 1915."
+62,Second B&O Railroad Bridge,Thru Truss,1915,,40.398198,-79.931331,Y,Monongahela,Photos/Allegheny/B_O_Railroad.jpg,A Monongahela River crossing was constructed for the Wheeling Branch of the Baltimore & Ohio Railroad between Hays and Glenwood in 1884. The original Whipple truss was replaced by the current Pennsylvania truss bridge (pictured) in 1915. The American Bridge Company constructed the new crossing.
+63,Brown's Bridge,Thru Truss,1897,1938,40.413455,-79.914787,Y,Monongahela,Photos/Allegheny/Browns.jpg,"The Homestead & Highland Bridge was known as Brown’s Bridge because it was built by a group of investors led by steamboat company owner Capt. Samuel S. Brown. The five-span Parker through truss bridge opened around 1897, connecting the bustling steel town of Homestead with Pittsburgh’s East End."
+64,Homestead Grays Bridge,Deck Truss,1937,,40.410669,-79.918433,Y,Monongahela,Photos/Allegheny/Homestead_Grays.jpg,"The Brown’s Bridge was unable to meet increasing traffic demands from the Homestead Steel Works. It was replaced by a high level bridge in 1937. The new bridge was first to use the Wichert Self-Adjusting Truss, a flexible hinged diamond assembly at the piers. It was renamed the Homestead Grays Bridge after the historic Negro League baseball team in 2002."
+66,West End Bridge,Arch,1932,,40.44645,-80.02689,Y,Ohio,Photos/Ohio/West_End.jpg,"Pittsburgh had no vehicular bridges over the Ohio River through the 1920s. Businesses started campaigning for a bridge in 1912. Funding was authorized in 1928, and the West End Bridge was completed in 1932. The 788-foot tied arch was the longest in America upon completion."
+68,Ohio Connecting Railroad Bridge,Thru Truss,1890,1915,40.462884,-80.042851,Y,Ohio,Photos/Ohio/First_Ohio_Connecting_Railroad.jpg,"The 1890 Ohio Connecting Railroad Bridge at Brunot’s Island was one of the longest bridges in America when it was built. It consisted of 29 spans, for a total length of over 4,500 feet. The railroad began to consider replacing and widening the bridge in 1910. "
+69,Ohio Connecting Railroad Bridge,Thru Truss,1915,,40.462884,-80.042851,Y,Ohio,Photos/Ohio/Ohio_Connecting_Railroad.jpg,"The railroad had to be operational during construction, and the river had to be free from obstructions. The 1915 main channel span was constructed around the old bridge, and the back channel span was built in halves to allow cantilevered construction of the main channel span."
+71,McKees Rocks Bridge,Arch,1931,,40.47715,-80.0485,Y,Ohio,Photos/Ohio/McKees_Rocks.jpg,"Planning for the McKees Rocks Bridge began in 1914. The bridge was completed in 1931 after two years of construction. The 5,900-foot-long bridge was one of the largest structures in the country. The bridge design paid tribute to New York City’s 1916 Hell Gate Bridge."
+74,Panther Hollow Bridge,,1896,,40.43704,-79.946729,N,,,
+75,First Schenley Park Bridge,,1890,1896,40.441358,-79.949285,N,,,
+75,Schenley Park Bridge,,1897,,40.441358,-79.949285,N,,,
+76,Wilmot Street Bridge,,1907,,40.434529,-79.950047,N,,,
+76,Charles Anderson Bridge,,1940,,40.434405,-79.950138,N,,,
+77,Forbes Avenue Bridge over Junction Hollow,,1898,1983,40.44450615,-79.94675617,N,,,
+77,Forbes Avenue Bridge over Junction Hollow,,1983,,40.44450615,-79.94675617,N,,,
+77,Forbes Avenue Bridge over Fern Hollow,,1901,1973,40.44,-79.900174,N,,,
+77,Forbes Avenue Bridge over Fern Hollow,,1973,,40.44,-79.900174,N,,,
+78,Sylvan Avenue Bridge,,1883,1915,40.427,-79.95049,N,,,
+78,Swinburne Bridge,,1915,,40.427,-79.95049,N,,,
+79,Penn Lincoln Parkway Bridge at Frazier Street,,1952,,40.427876,-79.949055,N,,,
+79,Halket Street Bridge,,1880,1920,40.435507,-79.957148,N,,,
+80,Blvd of Allies Downtown,,,,40.436189,-79.995832,N,,,
+80,Blvd of Allies Brady,,,,40.436914,-79.972516,N,,,
+81,Lawn,,,,40.435421,-79.965555,N,,,
+81,Blvd of Allies Forbes,,,,40.435901,-79.965,N,,,
+82,Mission over 21st St,,,,40.423604,-79.976789,N,,,
+83,Mission over Quarry St,,,,40.423226,-79.974398,N,,,
+84,Millvale,,,,40.456966,-79.94751,N,,,
+84,Greenfield,,,,40.426149,-79.937782,N,,,
+86,Aiken,,,,40.453866,-79.93738,N,,,
+87,Bloomfield,,,,40.460805,-79.955465,N,,,
+88,Swindell,,,,40.472322,-80.004901,N,,,
+89,California Ave / McAfee,,,,40.471503,-80.036794,N,,,
+90,Shadeland,,,,40.476084,-80.032715,N,,,
+90,Davis,,,,40.481795,-80.025806,N,,,
+92,Bellefield,,,,40.441987,-79.951903,N,,,
+92,Bridle Path,,,,40.434003,-79.935598,N,,,
+93,Lincoln,,,,40.462701,-79.90541,N,,,
+94,Meadow,,,,40.466919,-79.91598,N,,,
+96,Larimer,,,,40.467417,-79.90869,N,,,
+97,Hoeveler,,,,40.464685,-79.918912,N,,,
+98,Atherton PRR,,,,40.455281,-79.944193,N,,,
+99,Atherton PJRR,,,,40.454044,-79.950177,N,,,
+100,Murray Trolley and Murray,,,,40.42676,-79.927091,N,,,
+103,Heths,,,,40.487585,-79.919021,N,,,
+105,First and Second Beechwood,,,,40.428625,-79.937872,N,,,
+107,Mt Washington,,,,40.430383,-80.002348,N,,,
+108,Jacks Run,,,,40.487977,-80.04578,N,,,
+108,John Moore,,,,40.413918,-79.995039,N,,,
+109,Ohio River Blvd Woods Run,,,,40.471581,-80.037585,N,,,
+109,Ohio River Blvd Verner,,,,40.479965,-80.044218,N,,,
+110,Ohio River Blvd Jacks Run,,,,40.484208,-80.050618,N,,,
+110,Parkway Commercial,,,,40.425566,-79.906165,N,,,
+112,Ellsworth,,,,40.458688,-79.926561,N,,,
+113,Highland,,,,40.459,-79.9251,N,,,
+114,Negley,,,,40.456245,-79.926766,N,,,
+115,Centre,,,,40.454606,-79.942989,N,,,
+116,Herron,,,,40.459586,-79.966154,N,,,
+116,28th,,,,40.4559,-79.9733,N,,,
+118,Elizabeth,,,,40.406974,-79.944084,N,,,
+119,McArdle,,,,40.42777,-79.99289,N,,,
+120,Ohio,,,,40.451634,-80.010687,N,,,
+120,North,,,,40.453952,-80.014624,N,,,
+121,Columbus,,,,40.458555,-80.023666,N,,,
+121,Island,,,,40.461849,-80.031161,N,,,
+122,Chartiers,,,,40.452952,-80.054523,N,,,
+122,Castor,,,,40.433609,-80.034203,N,,,
+124,McFarren,,,,40.415566,-79.916653,N,,,
+125,Rutherglen,,,,40.418851,-79.948327,N,,,
+125,Washington,,,,40.443394,-79.992804,N,,,
+126,Pine,,,,40.457136,-79.98848,N,,,
+126,Wilksboro,,,,40.485859,-80.045369,N,,,
+127,Oregon,,,,40.461343,-80.053491,N,,,
+127,Windgap,,,,40.463341,-80.074088,N,,,
