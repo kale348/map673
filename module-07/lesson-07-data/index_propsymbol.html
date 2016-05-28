@@ -1,0 +1,237 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>US Power Plant Emissions</title>
+
+    <link href="http://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background: whitesmoke;
+            font-family: Montserrat, sans-serif;
+        }
+        
+        #map {
+            width: 900px;
+            height: 600px;
+            margin: 10px auto;
+            border: 1px solid #d3d3d3;
+        }
+        
+        .county {
+            stroke: #fff;
+            fill: #005DAA;
+        }
+        
+        .hover {
+            fill: yellow;
+        }
+        
+        .land {
+            fill: #d3d3d3;
+        }
+        
+        .emitter {
+            fill: yellow;
+            stroke: #777777;
+            opacity: 0.7;
+        }
+        
+        h1, h2 {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+            font-size: 2em;
+            font-weight: 100;
+            color: #005DAA;
+        }
+        
+        h2 {
+            top: 60px;
+            font-size: 1.2em;
+        }
+        
+        .slider {
+            width: 300px;
+            margin-left: 223px;
+        }
+        
+        #emission-value {
+            margin-left: 223px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    
+    <h1>US Counties</h1>
+    <h2></h2>
+    <div id="map"></div>
+    
+    <!-- Create the UI slider -->
+    <input type="range" class="slider">
+    <div id="emission-value"></div>
+
+    <!-- Load d3 library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    
+    <!-- Load Queue.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+
+    <!-- Load TopoJSON library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    
+    <script>
+        
+        //Declare the width and height of the anticipated SVG element
+        var width = 900,
+            height = 600;
+        
+        // Create an SVG element in the document body and specify its width and height
+        var svg = d3.select("#map") // select the map div element
+                    .append("svg") // create a new SVG element and append it to the map div
+                    .attr("width", width) // specify the width of the SVG element
+                    .attr("height", height); // specify the height of the SVG element
+        
+        // Create a new Albers Equal Area USA projection centered and scaled to fit within the 900x600 SVG element
+        // Albers USA pulls Alaska and Hawaii below the contiguous US
+        var projection = d3.geo.albersUsa() // create a new d3 projection function for Albers Equal Area USA
+                           .scale(1200) // scale the projection until it fits on the screen
+                           .translate([width/2, height/2]); // center the SVG element in the center of the page
+        
+        // Construct a path generator to draw the SVG paths from the GeoJSON in the specified projection
+        var geoPath = d3.geo.path() // create a new geo path generator
+                        .projection(projection); // assign it the projection we just created
+        
+        // Use Queue.js to load the data asynchronously, after the page has loaded
+        queue()
+            .defer(d3.json, 'us-counties-topo.json') // Load the US counties TopoJSON file
+            .defer(d3.json, "na_land_clipped.json") // Load the North America land GeoJSON file
+            .defer(d3.csv, "direct-emitters.csv") // Load the oil and gas emitters CSV file
+            .await(makeMap); // Once the data finishes loading, make the map
+        
+        // Creates the map once all of the GeoJSON data finishes loading
+        function makeMap(error, counties, na, emitters) {
+            // Draw the North America land data
+            svg.append("g") // Create a new SVG element called "g" and append it to the SVG
+               .selectAll("path") // Select all the path features that haven't been created yet
+               .data(na.features) // Bind the North America land GeoJSON data to the path
+               .enter() // Prepare to...
+               .append("path") // Append the newly created path data to the "g" SVG element
+               .attr("d", geoPath) // Define the screen coordinates of the new paths
+               .attr("class", "land"); // Give each path a class name of land to be able to style it using CSS
+                        
+            // Draw the US counties data
+            svg.append("g") // Create a new SVG element called "g" and append it to the SVG
+               .selectAll("path") // Select all the path features that haven't been created yet
+               .data(topojson.feature(counties, counties.objects.counties).features) // Get the county features from the TopoJSON object, convert them back to GeoJSON, and bind the GeoJSON counties to the path
+               .enter() // Prepare to...
+               .append("path") // Append the newly created path data to the "g" SVG element
+               .attr("d", geoPath) // Define the screen coordinates of the new paths
+               .attr("class", "county") // Give each path a class name of county to be able to style it using CSS
+
+               // When the user mouses over a county
+               .on("mouseover", function(d) {
+                    d3.select("h2").text(d.properties.NAME + ' County'); // Select the h2 heading and populate it with the county name
+                    d3.select(this).attr("class", "county hover"); // Select this county and assign it to the county hover class to give it an affordance
+                })
+
+                // When the user mouses off a county
+                .on("mouseout", function(d) {
+                    d3.select("h2").text(""); // Select the h2 heading and set it to "" to remove the county name
+                    d3.select(this).attr("class", "county"); // Select this county and reassign it to the county class to remove its hover affordance
+                });
+            
+            // Determine the radii for the direct emitters proportional circles
+            
+            // Create an array to hold each total emissions value
+            var data = [];
+            
+            // Add each total emissions value to the array
+            emitters.forEach(function(emitter) {
+                data.push(Number(emitter.total_emissions));
+            });
+            
+            // Get the min and max total emissions values
+            var min = Math.min.apply(Math, data),
+                max = Math.max.apply(Math, data);
+            
+            // Create a variable to store the radius of each circle. Use the d3 scale.sqrt() method. Set the domain of possible data to be the min and max values of total emissions. Set the range of symbol radii to be 3 to 20.
+            var radius = d3.scale.sqrt()
+                           .domain([min, max])
+                           .range([3, 20]);
+            
+            // Draw the direct emitters data and assign it to the facilities variable
+            var facilities = svg.append("g") // Create a new SVG element called "g" and append it to the SVG
+               .selectAll("circle") // Select all the circle features that haven't been created yet
+               .data(emitters) // Get the emitters features and bind them to the circle elements
+               .sort(function(a, b) { // Sort the data so the smaller circles draw on top of the larger circles
+                    return b.properties.total_emissions - a.properties.total_emissions;
+                })
+               .enter() // Prepare to...
+               .append("circle") // Append the newly created circles to the "g" SVG element
+               .attr("cx", function(d) {
+                    // Get the position of each circle from the lat and lon fields in the source data
+                    d.position = projection([d.lon, d.lat])
+                    // Remove data in Puerto Rico and the US Virgin Islands because it falls outside of the Albers USA projection. If the position is not null...
+                    if (d.position) {
+                        // Set the x position of the circle as the longitude in the source data
+                        return d.position[0];
+                    }
+                    else {
+                        // Log the feature with the null position
+                        console.log(d);
+                    }
+               })
+               .attr("cy", function(d) {
+                    // Remove data in Puerto Rico and the US Virgin Islands because it falls outside of the Albers USA projection. If the position is not null...
+                    if (d.position) {
+                        // Set the y position of the circle as the latitude in the source data
+                        return d.position[1];
+                    }
+               })
+               .attr("r", function(d) {
+                    // Set the radius of each point based on its total emissions value
+                    return radius(d.total_emissions)
+                }) 
+               .attr("class", "emitter"); // Give each circle a class name of emitter to be able to style it using CSS
+            
+            // Select the max emission value and assign it to the emission value div element and the output variable
+            var output = d3.select("#emission-value").text("Minimum Emissions to Display: " + min.toLocaleString());
+            
+            // Select the UI slider and give it a min, max, value, and step
+            d3.select(".slider")
+              .attr("min", min) // minimum emissions amount
+              .attr("max", max) // maximum emissions amount
+              .attr("value", min) // set the initial value to be the minimum emissions amount
+              .attr("step", (max-min)/300) // set the step at each pixel (300 steps)
+            
+              // When the user moves the slider bar
+              .on("input", function() {
+                    update(this.value); // call the update() function to remove all plants whose total emissions are less than the slider bar value
+               })
+            
+            // Filter out all plants whose total emissions are less than the slider bar value
+            function update(val) {
+                
+                // Update the emission value div to the current value of the slider bar
+                output.text("Minimum Emissions to Display: " + Number(val).toLocaleString());
+
+                facilities.attr("display", function(d) {
+                    // If the total emissions are less than the value of the slider, hide them from the map
+                    if(val >= Number(d.total_emissions)) {
+                        return "none";
+                    }
+                })
+            }
+            
+        }
+        
+    </script>
+    
+</body>
+
+</html>
