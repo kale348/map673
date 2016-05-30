@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>The Evolution of Pittsburgh's River Bridges</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Mapbox library -->
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+
+    <!-- Load Leaflet Omnivore plugin -->
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+
+    <!-- Load jQuery library -->
+    <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+
+    <!-- Load Simple Statistics library -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.min.js'></script>
+
+    <!-- Load Mapbox CSS -->
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+    <!-- Load Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+    
+    <link href='https://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+    
+    <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: "Open Sans", sans-serif;
+            color: #4d4d4d;
+        }
+        
+        h1 {
+            padding: 8px 25px 8px 15px;
+            color: #ffd401; /* Pittsburgh gold */
+            margin: 0;
+            background: #3d3d3d; 
+            font-weight: 400;
+            font-size: 1.3em;
+            text-align: left;
+            font-family: "Merriweather", serif;
+        }
+        
+        h2 {
+            margin: 0;
+            padding: 8px 25px 0px 15px;
+            color: #3d3d3d;
+            font-weight: 500;
+            font-size: 1.1em;
+            text-align: left;
+            font-family: "Merriweather", serif;            
+        }
+        a {
+            color: #4d4d4d;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 67%;
+        }
+        
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 33%;
+            background: #ffea80; /* Pittsburgh gold */
+            border-right: 2px solid #3d3d3d;
+/*            overflow-y: scroll;*/
+            /* add a scroll bar if content extends beyond the height of the page */
+        }
+        
+        #side-panel p {
+            margin: 8px 0 4px;
+            padding: 0 25px 0 15px;
+            text-align: left;
+            font-size: 0.8em;
+        }
+        
+        #side-panel p:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        #side-panel img {
+            float: right;
+            margin: 0 0 15px 15px;
+        }
+        
+        #legend {
+            position: absolute;
+            right: 15px;
+            bottom: 20px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #3d3d3d;
+            border-radius: 3px;
+            color: #3d3d3d;
+            width: 160px;
+            height: 180px;
+        }
+        /* legend heading */
+        
+        #legend h3 {
+            text-align: left;
+            font-weight: 500;
+            margin: 10px 0 10px;
+            font-size: 1em;
+        }
+        
+        #info {
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #3d3d3d;
+            border-radius: 3px;
+            color: #3d3d3d;
+            position: absolute;
+            font-size: 1em;
+            max-width: 300px;
+            display: none;
+            /* don't display until the user mouses over a county */
+            text-align: left;
+        }
+        /* paragraphs in the info window div */
+        
+        #info p {
+            margin: 3px 0 4px;
+            text-align: left;
+        }
+        /* electric lighting line of the info window */
+        
+        #info span:first-child {
+            font-size: 1.3em;
+            font-weight: 500;
+            text-align: left;
+        }
+        
+        #detailsPanel {
+            margin: 25px 0 0 0;          
+            max-height: 350px;
+            font-size: 0.9em;
+            /*display: none;  /* don't display until the user mouses over a county */
+        }       
+        
+        #detailsPanel p {
+            text-align: left;
+            padding: 0px 25px 0px 15px;
+        }
+        
+        #detailsPanel span:first-child {
+            font-weight: 500;
+            text-align: left;
+        }
+        
+        .choroplethLegend {         
+            position: absolute;
+            right: 5px;
+            top: 20px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #3d3d3d;
+            border-radius: 3px;
+            color: #3d3d3d;
+            width: 200px;
+            height: 220px;
+            text-align: left;
+            font-family: "Work Sans", sans-serif;           
+        }
+        
+        .choroplethLegend h3 {
+            text-align: left;
+            font-weight: 500;
+            margin: 5px 0 10px;
+        }
+        
+        .choroplethLegend span {
+            width: 32px;
+            height: 20px;
+            float: left;
+            margin: 0 10px 4px 0;
+            border: 1px solid #252525;
+            opacity: 0.4;
+        }
+        
+        .choroplethLegend label:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id='map'></div>
+
+    <div id='side-panel'>
+
+        <h1>The Evolution of Pittsburgh's River Bridges</h1>
+
+        <p>This map is an interactive companion to the book, <a href="http://www.amazon.com/Pittsburghs-Bridges-Images-America-Wilson/dp/1467134244" target="_blank"><i>Pittsburgh's Bridges (Images of America)</i></a>, by Todd Wilson, PE, and Helen Wilson, showcasing how the river bridges in Pittsburgh, Pennsylvania evolved from the wooden covered bridges of yesterday to those that define the skyline today.</p>
+        
+        <p>Scroll the slider through Pittsburgh's history to see when and where bridges first appeared and how the "City of Bridges" evolved into what it is today.</p>
+
+        <p>Bridge data and photos were acquired from <a href="http://www.amazon.com/Pittsburghs-Bridges-Images-America-Wilson/dp/1467134244" target="_blank"><i>Pittsburgh's Bridges (Images of America)</i></a>, <a href="http://www.pghbridges.com" target="_blank">Bruce Cridlebaugh</a>, or Todd Wilson.</p>
+        
+        <!-- Create the details panel div, which will display the bridge name, year built and demolished, image, image source, and description -->
+        <div id="detailsPanel">
+            <h1>Name (Built - Demolished)</h1>
+            <img src="">
+            <p class="imageSource">Image Source</p>
+            <p>Description</p>
+        </div>
+
+    </div>
+
+    <!-- Create the div to store the choropleth legend for the county colors -->
+    <div id="choroplethLegend">
+        <h3>Bridge Type</h3>
+    </div>
+
+    <!-- Create the info window div, which will display the bridge name and its year built and demolished-->
+    <div id="info">
+        <p><span></span></p>
+    </div>
+
+    <script>
+        
+        // Default basemap tiles        
+        var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            maxZoom: 16
+        });
+        
+        var Esri_WorldGrayReference = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            minZoom: 13,
+            maxZoom: 16
+        });
+        
+        // Mapbox access token
+        L.mapbox.accessToken = 'pk.eyJ1Ijoic2tlZXRpZG90IiwiYSI6IjJHd3UxZDgifQ.aeE1dODYNEMRwHQZT1MrLA';
+
+        // Set the map options
+        var options = {
+            center: [40.43, -80], // centered in Pittsburgh
+            zoom: 12, // initial zoom
+            minZoom: 12,
+            maxZoom: 16,
+            maxBounds: L.latLngBounds([40.28,-80.15], [40.58,-79.85]) // panning bounds so the user doesn't pan too far away from Pittsburgh
+        }
+
+        // Create a new Leaflet map, passing map options, and assign it to the map variable
+        var map = L.map('map', options);
+        
+        // Add the basemap
+        map.addLayer(Esri_WorldGrayCanvas);
+        map.addLayer(Esri_WorldGrayReference);
+        
+        // Define global variables
+        var bridges,
+            bridgeName = "Bridge",
+            bridgeType = "Type",
+            yearBuilt = "Year_Built",
+            yearDemolished = "Year_Demolished",
+            photoPath = "Photo_Path",
+            imageSource = "Image_Source",
+            description = "Notes";
+
+        // Use the Omnivore plugin to load the bridge points asynchronously and add them to the map if they have been properly loaded
+        var bridges = omnivore.csv('/data/pittsburgh_bridges.csv')
+        
+            // If the data has been properly loaded, convert it to a traditional GeoJSON layer and call the drawMap() function
+            .on('ready', function(e) {
+                drawMap(e.target.toGeoJSON());
+            })
+            
+            // If the data cannot be loaded or parsed, log an error message to the console
+            .on('error', function(e) {
+                console.log(e.error[0].message);
+            })
+        
+
+        //Use JQuery's getJSON() method to load the city boundary data asynchronously
+        $.getJSON("/data/city_border.geojson", function (data) {
+
+            // Create a Leaflet GeoJson layer for the city boundary and add it to the map
+            cityBorder = L.geoJson(data, {
+
+                // Create a style for the boundary
+                style: function (feature) {
+                    return {
+                        color: '#3d3d3d', // set stroke color
+                        weight: 2, // set stroke weight
+                        fillOpacity: 0, // override default fill opacity
+                        opacity: 1   
+                    };
+                }
+            }).addTo(map);
+            
+            // Move the city boundary to the bottom of the layer order
+            cityBorder.bringToBack();
+            
+        });
+        
+        // Draw the map with the bridges
+        function drawMap(bridges) {
+            
+            // Create a Leaflet GeoJson layer for the bridges and add it to the map
+            bridges = L.geoJson(bridges, {
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        fillColor: '#ffd401',
+                        fillOpacity: 1,
+                        color: 'black',
+                        weight: 1.25,
+                        opacity: 1,
+                        radius: 7
+                    });
+                }
+            }).addTo(map)
+        }
+        
+        
+    </script>
+</body>
+
+</html>

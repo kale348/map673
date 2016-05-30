@@ -86,10 +86,11 @@
 
     <!-- Load d3 library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.10.0/d3-legend.js"></script>
     
     <!-- Load Queue.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
-
+    
     <!-- Load TopoJSON library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
     
@@ -110,7 +111,7 @@
         
         // Create a new Albers Equal Area projection centered and scaled to fit within the 900x600 SVG element
         var projection = d3.geo.albers() // create a new d3 projection function for Albers Equal Area
-                           .center([0, 41]) // center the projection at 41 degrees north
+                           .center([0, 40.75]) // center the projection at 40.75 degrees north
                            .rotate([77.75 ,0]) // rotate the projection to 77.75 degrees west
                            .scale(11000) // scale the projection until it fits on the screen
                            .translate([width/2, height/2]); // center the SVG element in the center of the page
@@ -168,7 +169,34 @@
                     d3.select("h2 span:last-child").text(""); // Select the h2 heading and set it to "" to remove the county name
                     d3.select(this).attr("class", "county"); // Select this county and reassign it to the county class to remove its hover affordance
                 });
+
+                // Add the max value back to the breaks array to be able to include it in the legend
+                breaks.push(42);
             
+                // Create a linear legend with the domain and colors from the map
+                // Source: http://d3-legend.susielu.com/#color-linear
+                var linear = d3.scale.linear()
+                               .domain(breaks)
+                               .range(colors);
+
+                var legend = d3.select("svg");
+
+                // Add the legnd to the SVG and position it on the page
+                legend.append("g")
+                  .attr("class", "legendLinear")
+                  .attr("transform", "translate(50,530)");
+
+                // Define the legend type, shape width, orientation, and scale
+                var legendLinear = d3.legend.color()
+                  .shapeWidth(100)
+                  .orient('horizontal')
+                  .scale(linear)
+                  .title("Commute Time in Minutes")
+                  .labels(["< 20", "20-24", "25-27", "28-31", ">= 32"]);
+
+                // Call the function to build the legend
+                legend.select(".legendLinear")
+                  .call(legendLinear);
         }
         
     </script>
