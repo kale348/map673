@@ -27,7 +27,6 @@
         .hover {
             fill: yellow;
         }
-
         #side-panel {
             left: 0;
             top: 0;
@@ -165,7 +164,6 @@
                     d3.select("h2 span:last-child").text(d.properties.AvgCommute + " minutes"); // Select the h2 heading and populate it with the county name
                     d3.select(this).attr("class", "county hover"); // Select this county and assign it to the county hover class to give it an affordance
                 })
-
                 // When the user mouses off a county
                 .on("mouseout", function(d) {
                     d3.select("h2 span:first-child").text(""); // Select the h2 heading and set it to "" to remove the county name
