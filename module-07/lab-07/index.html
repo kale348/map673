@@ -127,8 +127,6 @@
         // Creates the map once all of the GeoJSON data finishes loading
         function makeMap(error, counties) {
             
-            console.log(counties);
-            
             // Determine the breaks for the choropleth map. Use the Simple Statistics jenks() method to return 5 natural class breaks based on the percentage of uninsured adults per county. Use the JavaScript map() method to create an array of the percentage of uninsured adults for each county.
             var breaks = ss.jenks(counties.features.map(function(d) {
                 return d.properties.AvgCommute;
